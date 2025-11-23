@@ -135,44 +135,34 @@
 
   // All four stories use your magnifying-lens overlay
   // NOTE: Replace `link` and `thumb` with your real Shopify URLs later.
-  const stories = [
-    {
-      id: 'windover',
-      title: 'From the Ice Age to the Space Age in Brevard County, FL',
-      subtitle: 'Windover People · Titusville, FL',
-      lat: 28.613,      // Windover site area
-      lng: -80.807,
-      link: 'https://trueplacegifts.com/blogs/stories/from-the-ice-age-to-the-space-age', // TODO: replace
-      thumb: 'https://via.placeholder.com/120x80?text=Windover'                             // TODO: replace
-    },
-    {
-      id: 'flip-coin',
-      title: 'The Coin That Flips the Super Bowl',
-      subtitle: 'The Highland Mint · Melbourne, FL',
-      lat: 28.0836,     // Highland Mint – Melbourne
-      lng: -80.6081,
-      link: 'https://trueplacegifts.com/blogs/stories/the-coin-that-flips-the-super-bowl', // TODO
-      thumb: 'https://via.placeholder.com/120x80?text=Flip+Coin'                            // TODO
-    },
-    {
-      id: 'space-ice-cream',
-      title: 'The Ice Cream That Wanted to Go to Space',
-      subtitle: 'Space Coast · Kennedy Space Center, FL',
-      lat: 28.5729,     // KSC Visitor Complex
-      lng: -80.6490,
-      link: 'https://trueplacegifts.com/blogs/stories/the-ice-cream-that-wanted-to-go-to-space', // TODO
-      thumb: 'https://via.placeholder.com/120x80?text=Space+Ice+Cream'                            // TODO
-    },
-    {
-      id: 'tom-thumb',
-      title: 'One of America’s First Global Celebrities – General Tom Thumb',
-      subtitle: 'Middleborough, Massachusetts',
-      lat: 41.8934,     // Middleborough, MA
-      lng: -70.9112,
-      link: 'https://trueplacegifts.com/blogs/stories/general-tom-thumb-the-smallest-giant', // TODO
-      thumb: 'https://via.placeholder.com/120x80?text=Tom+Thumb'                              // TODO
-    }
-  ];
+ const stories = [
+  {
+    id: 'windover',
+    title: 'From the Ice Age to the Space Age in Brevard County, FL',
+    subtitle: 'Windover People · Titusville, FL',
+    lat: 28.613,
+    lng: -80.807,
+    delta: 0.15,
+    link: 'https://trueplacegifts.com/blogs/stories/from-the-ice-age-to-the-space-age',
+    thumb: 'https://via.placeholder.com/120x80?text=Windover'
+  },
+  {
+    id: 'flip-coin',
+    title: 'The Coin That Flips the Super Bowl',
+    subtitle: 'The Highland Mint · Melbourne, FL',
+    lat: 28.0836,
+    lng: -80.6081,
+    delta: 0.15,
+    link: 'https://trueplacegifts.com/blogs/stories/the-coin-that-flips-the-super-bowl',
+    thumb: 'https://via.placeholder.com/120x80?text=Flip+Coin'
+  },
+  {
+    id: 'space-ice-cream',
+    title: 'The Ice Cream That Wanted to Go to Space',
+    subtitle: 'Space Coast · Kennedy Space Center, FL',
+    lat: 28.5729,
+    lng: -80.6490,
+
 
   const LENS_ICON_URL =
     'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png';
