@@ -25,6 +25,11 @@
       overflow-y: auto;
     }
 
+    #sidebar h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
     .story-item {
       display: flex;
       padding: 10px;
@@ -92,7 +97,7 @@
   <h2>True Place Stories</h2>
 
   <div class="story-item" data-id="iceage">
-    <img class="story-thumb" src="windover.jpg">
+    <img class="story-thumb" src="windover.jpg" alt="Windover People">
     <div>
       <strong>From the Ice Age to the Space Age in Brevard County, FL</strong><br>
       Windover People · Titusville, FL
@@ -100,7 +105,7 @@
   </div>
 
   <div class="story-item" data-id="flipcoin">
-    <img class="story-thumb" src="FlipCoin.jpg">
+    <img class="story-thumb" src="FlipCoin.jpg" alt="Flip Coin Story">
     <div>
       <strong>The Coin That Flips the Super Bowl</strong><br>
       The Highland Mint · Melbourne, FL
@@ -108,7 +113,7 @@
   </div>
 
   <div class="story-item" data-id="icecream">
-    <img class="story-thumb" src="icecream.jpg">
+    <img class="story-thumb" src="icecream.jpg" alt="Space Ice Cream Story">
     <div>
       <strong>The Ice Cream That Wanted to Go to Space</strong><br>
       Space Coast · Kennedy Space Center, FL
@@ -116,7 +121,7 @@
   </div>
 
   <div class="story-item" data-id="tomthumb">
-    <img class="story-thumb" src="TomThumb.jpg">
+    <img class="story-thumb" src="TomThumb.jpg" alt="Tom Thumb Story">
     <div>
       <strong>One of America’s First Global Celebrities — General Tom Thumb</strong><br>
       Middleborough, Massachusetts
@@ -129,7 +134,7 @@
 
 <!-- BEA -->
 <div id="bea-message">
-  <img id="bea-img" src="Otter_BEa_nov25_1.webp">
+  <img id="bea-img" src="Otter_BEa_nov25_1.webp" alt="Bea the Otter">
   <div id="bea-text">
     Hi, I'm Bea! Tap any green lens on the map to explore a story from that place.
   </div>
@@ -147,22 +152,26 @@ const stories = [
   {
     id: "iceage",
     name: "From the Ice Age to the Space Age",
-    coords: [28.613, -80.807] // Titusville
+    coords: [28.613, -80.807], // Titusville
+    zoom: 11
   },
   {
     id: "flipcoin",
     name: "The Coin That Flips the Super Bowl",
-    coords: [28.083, -80.608] // Melbourne
+    coords: [28.083, -80.608], // Melbourne
+    zoom: 11
   },
   {
     id: "icecream",
     name: "The Ice Cream That Wanted to Go to Space",
-    coords: [28.573, -80.646] // Kennedy Space Center
+    coords: [28.573, -80.646], // KSC
+    zoom: 11
   },
   {
     id: "tomthumb",
     name: "General Tom Thumb",
-    coords: [41.893, -70.910] // Middleborough, MA
+    coords: [41.893, -70.910], // Middleborough, MA
+    zoom: 12
   }
 ];
 
@@ -170,18 +179,19 @@ const stories = [
    MAP SETUP
 ------------------------------*/
 
-var map = L.map('map').setView([28.3, -81.2], 7);
+const map = L.map('map').setView([28.3, -81.2], 7);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(map);
 
 /* -----------------------------
-   MARKER ICONS
+   MARKER ICONS (SMALL)
 ------------------------------*/
 
-const iconSmall = 0.10;  // size in degrees (scale)
-const iconBig   = 0.18;  // highlighted size
+// Small scale in degrees (very tight, precise)
+const SCALE_SMALL = 0.02;
+const SCALE_BIG   = 0.04;
 
 // Helper: creates bounding box around coordinate
 function makeBounds(center, scale) {
@@ -191,12 +201,13 @@ function makeBounds(center, scale) {
   ];
 }
 
-let overlays = {}; // store each imageOverlay
+const overlays = {};
 
+// Create one overlay per story
 stories.forEach(story => {
-  let bounds = makeBounds(story.coords, iconSmall);
+  const bounds = makeBounds(story.coords, SCALE_SMALL);
 
-  let overlay = L.imageOverlay(
+  const overlay = L.imageOverlay(
     "magnifying_gift_icon_green_transparent.png",
     bounds,
     { interactive: true }
@@ -210,30 +221,37 @@ stories.forEach(story => {
 });
 
 /* -----------------------------
-   HIGHLIGHT FUNCTION
+   HIGHLIGHT + ZOOM FUNCTION
 ------------------------------*/
 
 function highlightStory(id) {
-
-  // 1) update sidebar selection
+  // 1) Update sidebar selection
   document.querySelectorAll(".story-item").forEach(item => {
     item.classList.toggle("active", item.dataset.id === id);
   });
 
-  // 2) enlarge the selected marker
+  // 2) Resize overlays: selected bigger, others smaller
   stories.forEach(story => {
+    const isSelected = story.id === id;
+    const scale = isSelected ? SCALE_BIG : SCALE_SMALL;
     overlays[story.id].setBounds(
-      makeBounds(story.coords, story.id === id ? iconBig : iconSmall)
+      makeBounds(story.coords, scale)
     );
+
+    if (isSelected) {
+      overlays[story.id].bringToFront();
+    }
   });
 
-  // 3) center map on selected marker
+  // 3) Center + zoom on selected place
   const match = stories.find(s => s.id === id);
-  map.setView(match.coords, map.getZoom());
+  if (match) {
+    map.flyTo(match.coords, match.zoom, { duration: 0.7 });
+  }
 }
 
 /* -----------------------------
-   CLICKING SIDEBAR SELECTS MARKER
+   SIDEBAR CLICKS
 ------------------------------*/
 
 document.querySelectorAll(".story-item").forEach(item => {
@@ -241,6 +259,9 @@ document.querySelectorAll(".story-item").forEach(item => {
     highlightStory(item.dataset.id);
   });
 });
+
+// Optional: start with first story highlighted
+highlightStory("iceage");
 </script>
 
 </body>
