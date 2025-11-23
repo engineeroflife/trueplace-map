@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>True Place Gifts Map</title>
+  <meta charset="utf-8" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  // Create map (centered on Florida)
+  var map = L.map('map').setView([28.1, -80.6], 7);
+
+  // Base layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  // EXAMPLE marker (we’ll replace with your stories)
+  L.marker([28.613, -80.807]).addTo(map)
+    .bindPopup("<b>Example Story</b><br><a href='https://trueplacegifts.com' target='_blank'>Open Story</a>");
+</script>
+
+</body>
+</html>
