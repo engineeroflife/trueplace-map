@@ -122,6 +122,13 @@
       line-height: 1.3;
     }
 
+    /* ⭐ Highlight glow */
+    .highlighted-overlay {
+      filter: drop-shadow(0 0 6px #39d98a)
+              drop-shadow(0 0 10px #39d98a)
+              drop-shadow(0 0 14px #39d98a);
+    }
+
     @media (max-width: 768px) {
       .layout {
         flex-direction: column;
@@ -180,7 +187,6 @@
   const initialCenter = [30.0, -80.0];
   const map = L.map('map').setView(initialCenter, 6);
 
-  // CARTO Voyager tiles
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
@@ -196,7 +202,7 @@
       lat: 28.613,
       lng: -80.807,
       delta: 0.08,
-      link: 'https://trueplacegifts.com', // TODO: replace with real blog link
+      link: 'https://trueplacegifts.com', 
       thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/windover.jpg'
     },
     {
@@ -206,7 +212,7 @@
       lat: 28.0836,
       lng: -80.6081,
       delta: 0.08,
-      link: 'https://trueplacegifts.com', // TODO: replace
+      link: 'https://trueplacegifts.com', 
       thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/FlipCoin.jpg'
     },
     {
@@ -216,7 +222,7 @@
       lat: 28.5729,
       lng: -80.6490,
       delta: 0.08,
-      link: 'https://trueplacegifts.com', // TODO: replace
+      link: 'https://trueplacegifts.com', 
       thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/icecream.jpg'
     },
     {
@@ -225,8 +231,8 @@
       subtitle: 'Middleborough, Massachusetts',
       lat: 41.8934,
       lng: -70.9112,
-      delta: 0.4, // larger so visible when zoomed out
-      link: 'https://trueplacegifts.com', // TODO: replace
+      delta: 0.4,
+      link: 'https://trueplacegifts.com', 
       thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/TomThumb.jpg'
     }
   ];
@@ -236,7 +242,7 @@
 
   const storyOverlays = {};
 
-  // --- Create scaling overlays for each story ---------------------------
+  // --- Create scaling overlays + highlight support -----------------------
 
   stories.forEach(story => {
     const center = [story.lat, story.lng];
@@ -253,53 +259,54 @@
       { interactive: true }
     ).addTo(map);
 
-    overlay.on('click', () => {
-      window.open(story.link, '_blank');
-    });
+    overlay.on('click', () => window.open(story.link, '_blank'));
 
     storyOverlays[story.id] = { overlay, center };
   });
 
-  // --- US state and Florida county boundaries ---------------------------
+  // --- Boundary layers ---------------------------------------------------
 
   // US states
   fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json')
     .then(r => r.json())
-    .then(geojson => {
-      L.geoJSON(geojson, {
-        style: {
-          color: '#8aa0a5',
-          weight: 1,
-          opacity: 0.5,
-          fillOpacity: 0
-        }
-      }).addTo(map);
-    })
-    .catch(err => console.warn('US states layer error', err));
-// Florida counties 
-fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/public/data/florida-counties.geojson')
+    .then(g => L.geoJSON(g, {
+      style: {
+        color: '#8aa0a5',
+        weight: 1,
+        opacity: 0.5,
+        fillOpacity: 0
+      }
+    }).addTo(map));
 
+  // Florida counties (WORKING URL)
+  fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/public/data/florida-counties.geojson')
     .then(r => r.json())
-    .then(geojson => {
-      L.geoJSON(geojson, {
-        style: {
-          color: '#5bb388',
-          weight: 1.2,
-          opacity: 0.8,
-          fillOpacity: 0
-        }
-      }).addTo(map);
-    })
-    .catch(err => console.warn('FL counties layer error', err));
+    .then(g => L.geoJSON(g, {
+      style: {
+        color: '#5bb388',
+        weight: 1.2,
+        opacity: 0.8,
+        fillOpacity: 0
+      }
+    }).addTo(map));
 
-  // --- Sidebar: clickable story list ------------------------------------
+  // --- Sidebar + story selection ----------------------------------------
 
   const listEl = document.getElementById('story-list');
 
   function setActiveStory(id) {
-    document.querySelectorAll('.story-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.id === id);
+    document.querySelectorAll('.story-item').forEach(el =>
+      el.classList.toggle('active', el.dataset.id === id)
+    );
+  }
+
+  // ⭐ Highlight selected lens
+  function highlightSelectedOverlay(selectedId) {
+    Object.values(storyOverlays).forEach(({ overlay }) => {
+      overlay.getElement()?.classList.remove('highlighted-overlay');
     });
+
+    storyOverlays[selectedId].overlay.getElement()?.classList.add('highlighted-overlay');
   }
 
   stories.forEach((story, index) => {
@@ -319,7 +326,9 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/p
       const info = storyOverlays[story.id];
       if (!info) return;
 
+      highlightSelectedOverlay(story.id);
       setActiveStory(story.id);
+
       map.flyTo(info.center, story.id === 'tom-thumb' ? 7 : 9, {
         duration: 0.9
       });
@@ -332,13 +341,11 @@ fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/p
     }
   });
 
-  // Start roughly centered over Florida
+  // Start centered roughly over Florida
   map.setView([28.5, -80.7], 7);
 
-  // --- Bea helper click -------------------------------------------------
-
+  // Bea helper
   document.getElementById('bea-helper').addEventListener('click', () => {
-    // For now, Bea recenters the map on Florida
     map.flyTo([28.5, -80.7], 7, { duration: 1.0 });
   });
 </script>
