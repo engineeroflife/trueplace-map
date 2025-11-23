@@ -1,33 +1,33 @@
 <script>
-  // Correct point at Titusville
-  const center = [28.540278, -80.843056];
+// Titusville coordinates
+const center = [28.540278, -80.843056];
 
-  // Create map
-  var map = L.map('map').setView(center, 8);
+// Create map
+var map = L.map('map').setView(center, 8);
 
-  // Base layer
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(map);
+// Base map layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19
+}).addTo(map);
 
-  // Overlay size in degrees (~8 miles across)
-  const delta = 0.12;  
+// Overlay size (adjust if needed)
+const delta = 0.12;
 
-  // Bounds around your coordinate
-  const bounds = [
-    [center[0] + delta, center[1] - delta],  // NW
-    [center[0] - delta, center[1] + delta]   // SE
-  ];
+// LatLngBounds for image overlay
+const bounds = L.latLngBounds(
+  [center[0] + delta, center[1] - delta],  // NW corner
+  [center[0] - delta, center[1] + delta]   // SE corner
+);
 
-  // Add the image overlay that scales with the map
-  const overlay = L.imageOverlay(
-    'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
-    bounds,
-    { interactive: true }
-  ).addTo(map);
+// Add SVG or PNG as a scaling image overlay
+const overlay = L.imageOverlay(
+  'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
+  bounds,
+  { interactive: true }
+).addTo(map);
 
-  // Make it clickable (opens story link)
-  overlay.on('click', () => {
-    window.open('https://trueplacegifts.com', '_blank');
-  });
+// Make icon clickable
+overlay.on('click', () => {
+  window.open('https://trueplacegifts.com', '_blank');
+});
 </script>
