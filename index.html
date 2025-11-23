@@ -26,10 +26,13 @@
   // Create map (centered on Florida)
   var map = L.map('map').setView([28.1, -80.6], 7);
 
-  // Base layer
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // Create map (centered on Florida)
+var map = L.map('map').setView([28.1, -80.6], 7);
+
+// Base layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
-  }).addTo(map);
+}).addTo(map);
 
 // Custom green magnifying lens icon (transparent)
 var giftLens = L.icon({
@@ -40,5 +43,5 @@ var giftLens = L.icon({
 });
 
 L.marker([28.613, -80.807], { icon: giftLens }).addTo(map)
-  .bindPopup('<b>Example Story</b><br><a href="https://trueplacegifts.com" target="_blank">Open Story</a>');
+  .bindPopup("<b>Example Story</b><br><a href='https://trueplacegifts.com' target='_blank'>Open Story</a>");
 
