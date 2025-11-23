@@ -1,49 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>True Place Gifts Map</title>
-  <meta charset="utf-8" />
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-  <style>
-    #map {
-      height: 100vh;
-      width: 100%;
-    }
-  </style>
-</head>
-
-<body>
-
-<div id="map"></div>
-
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
 <script>
-  // Create map (centered on Florida)
-  var map = L.map('map').setView([28.1, -80.6], 7);
+  // Center on your exact coordinates (Titusville / Space Coast)
+  var center = [28.540278, -80.843056];
+
+  // Create map
+  var map = L.map('map').setView(center, 8); // zoom 8 to see most of Florida
 
   // Base layer
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
   }).addTo(map);
 
-  // Custom green magnifying lens icon (transparent)
-  var giftLens = L.icon({
-  iconUrl: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
-  iconSize: [24, 24],
-  iconAnchor: [12, 24],
-  popupAnchor: [0, -24]
-});
+  // Bounds for the scaling overlay around your point
+  // (you can tweak 0.35 to make the icon bigger/smaller on the map)
+  var overlayBounds = L.latLngBounds(
+    [center[0] + 0.35, center[1] - 0.35], // north-west
+    [center[0] - 0.35, center[1] + 0.35]  // south-east
+  );
 
-  // Example marker using custom icon
-  L.marker([28.613, -80.807], { icon: giftLens }).addTo(map)
-    .bindPopup("<b>Example Story</b><br><a href='https://trueplacegifts.com' target='_blank'>Open Story</a>");
+  // Image overlay that scales WITH the map and stays locked to location
+  var storyUrl = 'https://trueplacegifts.com'; // <- change to your story link
+  var lensOverlay = L.imageOverlay(
+    'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
+    overlayBounds
+  ).addTo(map);
 
+  // Make the overlay clickable: open your story in a new tab
+  lensOverlay.on('click', function () {
+    window.open(storyUrl, '_blank');
+  });
 </script>
-
-</body>
-</html>
