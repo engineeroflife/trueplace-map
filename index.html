@@ -276,9 +276,9 @@
       }).addTo(map);
     })
     .catch(err => console.warn('US states layer error', err));
+// Florida counties 
+fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/public/data/florida-counties.geojson')
 
-  // Florida counties
-  fetch('https://raw.githubusercontent.com/OpenDataDE/State-zip-codes/master/florida_counties.geojson')
     .then(r => r.json())
     .then(geojson => {
       L.geoJSON(geojson, {
