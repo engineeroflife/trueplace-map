@@ -1,3 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>True Place Gifts Map</title>
+  <meta charset="utf-8" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
 // Titusville coordinates
 const center = [28.540278, -80.843056];
@@ -27,7 +51,4 @@ const overlay = L.imageOverlay(
 ).addTo(map);
 
 // Make icon clickable
-overlay.on('click', () => {
-  window.open('https://trueplacegifts.com', '_blank');
-});
-</script>
+ove
