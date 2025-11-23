@@ -32,9 +32,16 @@
   }).addTo(map);
 
   // EXAMPLE marker (we’ll replace with your stories)
-  L.marker([28.613, -80.807]).addTo(map)
-    .bindPopup("<b>Example Story</b><br><a href='https://trueplacegifts.com' target='_blank'>Open Story</a>");
+ L.marker([28.613, -80.807], { icon: giftLens }).addTo(map)
+  .bindPopup("<b>Example Story</b><br><a href='https://trueplacegifts.com' target='_blank'>Open Story</a>");
 </script>
 
 </body>
 </html>
+// Custom magnifying lens icon
+var giftLens = L.icon({
+  iconUrl: 'magnifying_gift_icon.png',
+  iconSize: [64, 64],
+  iconAnchor: [32, 64],
+  popupAnchor: [0, -64]
+});
