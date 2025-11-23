@@ -30,8 +30,9 @@ const center = [28.540278, -80.843056];
 var map = L.map('map').setView(center, 8);
 
 // Base map layer
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
 }).addTo(map);
 
 // Overlay size (adjust if needed)
