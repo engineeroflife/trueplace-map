@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>True Place Gifts Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
@@ -12,7 +13,7 @@
       margin: 0;
       display: flex;
       height: 100vh;
-      font-family: Arial, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       overflow: hidden;
     }
 
@@ -20,57 +21,75 @@
     #sidebar {
       width: 290px;
       background: #ffffff;
-      border-right: 1px solid #ddd;
+      border-right: 1px solid #e2e8f0;
       padding: 10px;
       overflow-y: auto;
+      box-shadow: 0 0 14px rgba(15, 23, 42, 0.12);
+      z-index: 500;
     }
 
     #sidebar h2 {
-      margin-top: 0;
-      margin-bottom: 10px;
+      margin: 4px 4px 10px;
+      font-size: 18px;
     }
 
     .story-item {
       display: flex;
       padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
+      margin-bottom: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: 0.2s;
+      transition: background 0.16s, transform 0.12s, box-shadow 0.12s;
       align-items: center;
     }
 
     .story-item:hover {
-      background: #f2f6ff;
+      background: #f1f5f9;
+      transform: translateY(-1px);
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.15);
     }
 
     .story-item.active {
-      background: #dff5e1;
-      border-left: 5px solid #31a354;
+      background: #e0fbea;
+      border-left: 4px solid #22c55e;
     }
 
     .story-thumb {
       width: 48px;
       height: 48px;
       margin-right: 10px;
-      border-radius: 6px;
+      border-radius: 8px;
       object-fit: cover;
+      flex-shrink: 0;
     }
 
+    .story-text-title {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .story-text-sub {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* Map */
     #map {
       flex: 1;
       height: 100%;
       width: 100%;
     }
 
-    /* Bea Bubble */
+    /* Bea bubble */
     #bea-message {
       position: absolute;
       bottom: 20px;
       left: 20px;
       display: flex;
       align-items: flex-end;
-      z-index: 999;
+      z-index: 900;
     }
 
     #bea-img {
@@ -80,15 +99,108 @@
 
     #bea-text {
       background: white;
-      padding: 12px 15px;
+      padding: 10px 12px;
       border-radius: 10px;
-      border: 1px solid #ccc;
+      border: 1px solid #cbd5e1;
       width: 220px;
-      font-size: 14px;
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+      font-size: 13px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.28);
+    }
+
+    /* Tiny custom marker (12px) */
+    .tp-marker.leaflet-div-icon {
+      background: transparent;
+      border: none;
+    }
+
+    .tp-marker-inner {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #39A96B;
+      border: 2px solid #1F7A47;
+      box-sizing: content-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tp-marker-plus {
+      width: 6px;
+      height: 6px;
+      position: relative;
+    }
+
+    .tp-marker-plus::before,
+    .tp-marker-plus::after {
+      content: "";
+      position: absolute;
+      background: #ffffff;
+      border-radius: 1px;
+    }
+
+    .tp-marker-plus::before {
+      width: 2px;
+      height: 6px;
+      left: 2px;
+      top: 0;
+    }
+
+    .tp-marker-plus::after {
+      width: 6px;
+      height: 2px;
+      left: 0;
+      top: 2px;
+    }
+
+    /* Active marker: glow + soft pulse */
+    .tp-marker-active .tp-marker-inner {
+      box-shadow:
+        0 0 6px rgba(34, 197, 94, 0.9),
+        0 0 10px rgba(34, 197, 94, 0.7);
+      animation: tpPulse 0.9s ease-out 0s 2;
+      transform: scale(1.4);
+    }
+
+    @keyframes tpPulse {
+      0% {
+        transform: scale(1.0);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.8);
+      }
+      50% {
+        transform: scale(1.45);
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.0);
+      }
+      100% {
+        transform: scale(1.4);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      #sidebar {
+        width: 100%;
+        height: 210px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+      }
+      #map {
+        height: calc(100vh - 210px);
+      }
+      #bea-message {
+        left: 10px;
+        bottom: 10px;
+      }
+      #bea-img {
+        width: 80px;
+      }
+      #bea-text {
+        width: 190px;
+      }
     }
   </style>
-
 </head>
 <body>
 
@@ -99,32 +211,32 @@
   <div class="story-item" data-id="iceage">
     <img class="story-thumb" src="windover.jpg" alt="Windover People">
     <div>
-      <strong>From the Ice Age to the Space Age in Brevard County, FL</strong><br>
-      Windover People · Titusville, FL
+      <div class="story-text-title">From the Ice Age to the Space Age in Brevard County, FL</div>
+      <div class="story-text-sub">Windover People · Titusville, FL</div>
     </div>
   </div>
 
   <div class="story-item" data-id="flipcoin">
     <img class="story-thumb" src="FlipCoin.jpg" alt="Flip Coin Story">
     <div>
-      <strong>The Coin That Flips the Super Bowl</strong><br>
-      The Highland Mint · Melbourne, FL
+      <div class="story-text-title">The Coin That Flips the Super Bowl</div>
+      <div class="story-text-sub">The Highland Mint · Melbourne, FL</div>
     </div>
   </div>
 
   <div class="story-item" data-id="icecream">
     <img class="story-thumb" src="icecream.jpg" alt="Space Ice Cream Story">
     <div>
-      <strong>The Ice Cream That Wanted to Go to Space</strong><br>
-      Space Coast · Kennedy Space Center, FL
+      <div class="story-text-title">The Ice Cream That Wanted to Go to Space</div>
+      <div class="story-text-sub">Space Coast · Kennedy Space Center, FL</div>
     </div>
   </div>
 
   <div class="story-item" data-id="tomthumb">
     <img class="story-thumb" src="TomThumb.jpg" alt="Tom Thumb Story">
     <div>
-      <strong>One of America’s First Global Celebrities — General Tom Thumb</strong><br>
-      Middleborough, Massachusetts
+      <div class="story-text-title">One of America’s First Global Celebrities — General Tom Thumb</div>
+      <div class="story-text-sub">Middleborough, Massachusetts</div>
     </div>
   </div>
 </div>
@@ -144,124 +256,101 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-/* -----------------------------
-   STORY DATA (4 locations)
-------------------------------*/
-
-const stories = [
-  {
-    id: "iceage",
-    name: "From the Ice Age to the Space Age",
-    coords: [28.613, -80.807], // Titusville
-    zoom: 11
-  },
-  {
-    id: "flipcoin",
-    name: "The Coin That Flips the Super Bowl",
-    coords: [28.083, -80.608], // Melbourne
-    zoom: 11
-  },
-  {
-    id: "icecream",
-    name: "The Ice Cream That Wanted to Go to Space",
-    coords: [28.573, -80.646], // KSC
-    zoom: 11
-  },
-  {
-    id: "tomthumb",
-    name: "General Tom Thumb",
-    coords: [41.893, -70.910], // Middleborough, MA
-    zoom: 12
-  }
-];
-
-/* -----------------------------
-   MAP SETUP
-------------------------------*/
-
-const map = L.map('map').setView([28.3, -81.2], 7);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19
-}).addTo(map);
-
-/* -----------------------------
-   MARKER ICONS (SMALL)
-------------------------------*/
-
-// Small scale in degrees (very tight, precise)
-const SCALE_SMALL = 0.02;
-const SCALE_BIG   = 0.04;
-
-// Helper: creates bounding box around coordinate
-function makeBounds(center, scale) {
-  return [
-    [center[0] + scale, center[1] - scale],
-    [center[0] - scale, center[1] + scale]
+  // ---- Story data (coords + zoom) ----
+  const stories = [
+    {
+      id: "iceage",
+      coords: [28.613, -80.807], // Titusville
+      zoom: 11
+    },
+    {
+      id: "flipcoin",
+      coords: [28.083, -80.608], // Melbourne
+      zoom: 11
+    },
+    {
+      id: "icecream",
+      coords: [28.573, -80.646], // KSC
+      zoom: 11
+    },
+    {
+      id: "tomthumb",
+      coords: [41.893, -70.910], // Middleborough, MA
+      zoom: 13
+    }
   ];
-}
 
-const overlays = {};
+  // ---- Map setup (Carto Light) ----
+  const map = L.map('map').setView([28.3, -81.2], 7);
 
-// Create one overlay per story
-stories.forEach(story => {
-  const bounds = makeBounds(story.coords, SCALE_SMALL);
-
-  const overlay = L.imageOverlay(
-    "magnifying_gift_icon_green_transparent.png",
-    bounds,
-    { interactive: true }
+  L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+    {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> ' +
+        '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+    }
   ).addTo(map);
 
-  overlays[story.id] = overlay;
-
-  overlay.on("click", () => {
-    highlightStory(story.id);
-  });
-});
-
-/* -----------------------------
-   HIGHLIGHT + ZOOM FUNCTION
-------------------------------*/
-
-function highlightStory(id) {
-  // 1) Update sidebar selection
-  document.querySelectorAll(".story-item").forEach(item => {
-    item.classList.toggle("active", item.dataset.id === id);
+  // ---- Custom tiny marker icon (12px circle+plus) ----
+  const tpIcon = L.divIcon({
+    className: 'tp-marker',
+    html: '<div class="tp-marker-inner"><div class="tp-marker-plus"></div></div>',
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
   });
 
-  // 2) Resize overlays: selected bigger, others smaller
+  // ---- Create markers ----
+  const markers = {};
+
   stories.forEach(story => {
-    const isSelected = story.id === id;
-    const scale = isSelected ? SCALE_BIG : SCALE_SMALL;
-    overlays[story.id].setBounds(
-      makeBounds(story.coords, scale)
-    );
+    const marker = L.marker(story.coords, { icon: tpIcon }).addTo(map);
+    markers[story.id] = marker;
 
-    if (isSelected) {
-      overlays[story.id].bringToFront();
+    marker.on('click', () => {
+      highlightStory(story.id);
+    });
+  });
+
+  // ---- Highlight + zoom function ----
+  function highlightStory(id) {
+    // Sidebar state
+    document.querySelectorAll('.story-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.id === id);
+    });
+
+    // Marker visual state
+    stories.forEach(story => {
+      const m = markers[story.id];
+      const el = m.getElement();
+      if (!el) return;
+      if (story.id === id) {
+        el.classList.add('tp-marker-active');
+        m.setZIndexOffset(1000);
+      } else {
+        el.classList.remove('tp-marker-active');
+        m.setZIndexOffset(0);
+      }
+    });
+
+    // Fly to selected place
+    const story = stories.find(s => s.id === id);
+    if (story) {
+      map.flyTo(story.coords, story.zoom, { duration: 0.8 });
     }
-  });
-
-  // 3) Center + zoom on selected place
-  const match = stories.find(s => s.id === id);
-  if (match) {
-    map.flyTo(match.coords, match.zoom, { duration: 0.7 });
   }
-}
 
-/* -----------------------------
-   SIDEBAR CLICKS
-------------------------------*/
-
-document.querySelectorAll(".story-item").forEach(item => {
-  item.addEventListener("click", () => {
-    highlightStory(item.dataset.id);
+  // ---- Sidebar click handlers ----
+  document.querySelectorAll('.story-item').forEach(item => {
+    item.addEventListener('click', () => {
+      highlightStory(item.dataset.id);
+    });
   });
-});
 
-// Optional: start with first story highlighted
-highlightStory("iceage");
+  // Start focused on Florida + highlight first story
+  map.setView([28.5, -80.7], 7);
+  highlightStory('iceage');
 </script>
 
 </body>
