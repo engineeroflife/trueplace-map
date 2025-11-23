@@ -1,180 +1,137 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>True Place Gifts Map</title>
   <meta charset="utf-8" />
+  <title>True Place Gifts Map</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <style>
-    * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    .layout {
       display: flex;
       height: 100vh;
-      width: 100vw;
-      position: relative;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
     }
 
+    /* Sidebar */
     #sidebar {
-      width: 310px;
-      max-width: 40vw;
+      width: 290px;
       background: #ffffff;
-      border-right: 1px solid #e2e8f0;
-      box-shadow: 0 0 16px rgba(15, 23, 42, 0.08);
-      padding: 16px 14px;
+      border-right: 1px solid #ddd;
+      padding: 10px;
       overflow-y: auto;
-      z-index: 500;
-    }
-
-    #sidebar h1 {
-      font-size: 18px;
-      margin: 0 0 10px 2px;
     }
 
     .story-item {
       display: flex;
-      gap: 10px;
-      padding: 8px;
-      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
+      transition: 0.2s;
+      align-items: center;
     }
 
     .story-item:hover {
-      background: #f1f5f9;
-      transform: translateY(-1px);
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+      background: #f2f6ff;
     }
 
     .story-item.active {
-      background: #e0f7ee;
-      box-shadow: 0 0 0 1px #22c55e inset;
+      background: #dff5e1;
+      border-left: 5px solid #31a354;
     }
 
     .story-thumb {
-      width: 54px;
-      height: 54px;
-      border-radius: 9px;
+      width: 48px;
+      height: 48px;
+      margin-right: 10px;
+      border-radius: 6px;
       object-fit: cover;
-      flex-shrink: 0;
-    }
-
-    .story-text {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 2px;
-    }
-
-    .story-title {
-      font-size: 14px;
-      font-weight: 600;
-      line-height: 1.2;
-    }
-
-    .story-subtitle {
-      font-size: 12px;
-      color: #64748b;
     }
 
     #map {
       flex: 1;
       height: 100%;
       width: 100%;
-      z-index: 100;
     }
 
-    /* Bea helper */
-    #bea-helper {
-      position: fixed;
+    /* Bea Bubble */
+    #bea-message {
+      position: absolute;
       bottom: 20px;
-      left: 24px;
-      z-index: 900;
-      cursor: pointer;
+      left: 20px;
       display: flex;
       align-items: flex-end;
-      gap: 8px;
+      z-index: 999;
     }
 
     #bea-img {
-      height: 120px;
-      transition: transform 0.2s ease;
+      width: 95px;
+      margin-right: 10px;
     }
 
-    #bea-helper:hover #bea-img {
-      transform: scale(1.06);
-    }
-
-    #bea-bubble {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 8px 10px;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
-      font-size: 12px;
-      max-width: 220px;
-      line-height: 1.3;
-    }
-
-    /* ⭐ Highlight glow */
-    .highlighted-overlay {
-      filter: drop-shadow(0 0 6px #39d98a)
-              drop-shadow(0 0 10px #39d98a)
-              drop-shadow(0 0 14px #39d98a);
-    }
-
-    @media (max-width: 768px) {
-      .layout {
-        flex-direction: column;
-      }
-      #sidebar {
-        width: 100%;
-        max-width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #e2e8f0;
-      }
-      #map {
-        height: calc(100vh - 180px);
-      }
-      #bea-helper {
-        left: 12px;
-        bottom: 12px;
-      }
-      #bea-img {
-        height: 100px;
-      }
-      #bea-bubble {
-        max-width: 180px;
-      }
+    #bea-text {
+      background: white;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 220px;
+      font-size: 14px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
     }
   </style>
-</head>
 
+</head>
 <body>
 
-<div class="layout">
-  <div id="sidebar">
-    <h1>True Place Stories</h1>
-    <div id="story-list"></div>
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <h2>True Place Stories</h2>
+
+  <div class="story-item" data-id="iceage">
+    <img class="story-thumb" src="windover.jpg">
+    <div>
+      <strong>From the Ice Age to the Space Age in Brevard County, FL</strong><br>
+      Windover People · Titusville, FL
+    </div>
   </div>
-  <div id="map"></div>
+
+  <div class="story-item" data-id="flipcoin">
+    <img class="story-thumb" src="FlipCoin.jpg">
+    <div>
+      <strong>The Coin That Flips the Super Bowl</strong><br>
+      The Highland Mint · Melbourne, FL
+    </div>
+  </div>
+
+  <div class="story-item" data-id="icecream">
+    <img class="story-thumb" src="icecream.jpg">
+    <div>
+      <strong>The Ice Cream That Wanted to Go to Space</strong><br>
+      Space Coast · Kennedy Space Center, FL
+    </div>
+  </div>
+
+  <div class="story-item" data-id="tomthumb">
+    <img class="story-thumb" src="TomThumb.jpg">
+    <div>
+      <strong>One of America’s First Global Celebrities — General Tom Thumb</strong><br>
+      Middleborough, Massachusetts
+    </div>
+  </div>
 </div>
 
-<!-- Bea the Otter helper -->
-<div id="bea-helper">
-  <img
-    id="bea-img"
-    src="https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/Otter_BEa_nov25_1.webp"
-    alt="Bea the Otter"
-  />
-  <div id="bea-bubble">
-    Hi, I’m Bea! Tap any green lens on the map to explore a story from that place.
+<!-- MAP -->
+<div id="map"></div>
+
+<!-- BEA -->
+<div id="bea-message">
+  <img id="bea-img" src="Otter_BEa_nov25_1.webp">
+  <div id="bea-text">
+    Hi, I'm Bea! Tap any green lens on the map to explore a story from that place.
   </div>
 </div>
 
@@ -182,172 +139,108 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-  // --- Base map ----------------------------------------------------------
+/* -----------------------------
+   STORY DATA (4 locations)
+------------------------------*/
 
-  const initialCenter = [30.0, -80.0];
-  const map = L.map('map').setView(initialCenter, 6);
+const stories = [
+  {
+    id: "iceage",
+    name: "From the Ice Age to the Space Age",
+    coords: [28.613, -80.807] // Titusville
+  },
+  {
+    id: "flipcoin",
+    name: "The Coin That Flips the Super Bowl",
+    coords: [28.083, -80.608] // Melbourne
+  },
+  {
+    id: "icecream",
+    name: "The Ice Cream That Wanted to Go to Space",
+    coords: [28.573, -80.646] // Kennedy Space Center
+  },
+  {
+    id: "tomthumb",
+    name: "General Tom Thumb",
+    coords: [41.893, -70.910] // Middleborough, MA
+  }
+];
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
-  }).addTo(map);
+/* -----------------------------
+   MAP SETUP
+------------------------------*/
 
-  // --- Story data --------------------------------------------------------
+var map = L.map('map').setView([28.3, -81.2], 7);
 
-  const stories = [
-    {
-      id: 'windover',
-      title: 'From the Ice Age to the Space Age in Brevard County, FL',
-      subtitle: 'Windover People · Titusville, FL',
-      lat: 28.613,
-      lng: -80.807,
-      delta: 0.08,
-      link: 'https://trueplacegifts.com', 
-      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/windover.jpg'
-    },
-    {
-      id: 'flip-coin',
-      title: 'The Coin That Flips the Super Bowl',
-      subtitle: 'The Highland Mint · Melbourne, FL',
-      lat: 28.0836,
-      lng: -80.6081,
-      delta: 0.08,
-      link: 'https://trueplacegifts.com', 
-      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/FlipCoin.jpg'
-    },
-    {
-      id: 'space-ice-cream',
-      title: 'The Ice Cream That Wanted to Go to Space',
-      subtitle: 'Space Coast · Kennedy Space Center, FL',
-      lat: 28.5729,
-      lng: -80.6490,
-      delta: 0.08,
-      link: 'https://trueplacegifts.com', 
-      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/icecream.jpg'
-    },
-    {
-      id: 'tom-thumb',
-      title: 'One of America’s First Global Celebrities – General Tom Thumb',
-      subtitle: 'Middleborough, Massachusetts',
-      lat: 41.8934,
-      lng: -70.9112,
-      delta: 0.4,
-      link: 'https://trueplacegifts.com', 
-      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/TomThumb.jpg'
-    }
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19
+}).addTo(map);
+
+/* -----------------------------
+   MARKER ICONS
+------------------------------*/
+
+const iconSmall = 0.10;  // size in degrees (scale)
+const iconBig   = 0.18;  // highlighted size
+
+// Helper: creates bounding box around coordinate
+function makeBounds(center, scale) {
+  return [
+    [center[0] + scale, center[1] - scale],
+    [center[0] - scale, center[1] + scale]
   ];
+}
 
-  const LENS_ICON_URL =
-    'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png';
+let overlays = {}; // store each imageOverlay
 
-  const storyOverlays = {};
+stories.forEach(story => {
+  let bounds = makeBounds(story.coords, iconSmall);
 
-  // --- Create scaling overlays + highlight support -----------------------
+  let overlay = L.imageOverlay(
+    "magnifying_gift_icon_green_transparent.png",
+    bounds,
+    { interactive: true }
+  ).addTo(map);
 
+  overlays[story.id] = overlay;
+
+  overlay.on("click", () => {
+    highlightStory(story.id);
+  });
+});
+
+/* -----------------------------
+   HIGHLIGHT FUNCTION
+------------------------------*/
+
+function highlightStory(id) {
+
+  // 1) update sidebar selection
+  document.querySelectorAll(".story-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.id === id);
+  });
+
+  // 2) enlarge the selected marker
   stories.forEach(story => {
-    const center = [story.lat, story.lng];
-    const delta = story.delta;
-
-    const bounds = L.latLngBounds(
-      [center[0] + delta, center[1] - delta],
-      [center[0] - delta, center[1] + delta]
+    overlays[story.id].setBounds(
+      makeBounds(story.coords, story.id === id ? iconBig : iconSmall)
     );
-
-    const overlay = L.imageOverlay(
-      LENS_ICON_URL,
-      bounds,
-      { interactive: true }
-    ).addTo(map);
-
-    overlay.on('click', () => window.open(story.link, '_blank'));
-
-    storyOverlays[story.id] = { overlay, center };
   });
 
-  // --- Boundary layers ---------------------------------------------------
+  // 3) center map on selected marker
+  const match = stories.find(s => s.id === id);
+  map.setView(match.coords, map.getZoom());
+}
 
-  // US states
-  fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json')
-    .then(r => r.json())
-    .then(g => L.geoJSON(g, {
-      style: {
-        color: '#8aa0a5',
-        weight: 1,
-        opacity: 0.5,
-        fillOpacity: 0
-      }
-    }).addTo(map));
+/* -----------------------------
+   CLICKING SIDEBAR SELECTS MARKER
+------------------------------*/
 
-  // Florida counties (WORKING URL)
-  fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/public/data/florida-counties.geojson')
-    .then(r => r.json())
-    .then(g => L.geoJSON(g, {
-      style: {
-        color: '#5bb388',
-        weight: 1.2,
-        opacity: 0.8,
-        fillOpacity: 0
-      }
-    }).addTo(map));
-
-  // --- Sidebar + story selection ----------------------------------------
-
-  const listEl = document.getElementById('story-list');
-
-  function setActiveStory(id) {
-    document.querySelectorAll('.story-item').forEach(el =>
-      el.classList.toggle('active', el.dataset.id === id)
-    );
-  }
-
-  // ⭐ Highlight selected lens
-  function highlightSelectedOverlay(selectedId) {
-    Object.values(storyOverlays).forEach(({ overlay }) => {
-      overlay.getElement()?.classList.remove('highlighted-overlay');
-    });
-
-    storyOverlays[selectedId].overlay.getElement()?.classList.add('highlighted-overlay');
-  }
-
-  stories.forEach((story, index) => {
-    const item = document.createElement('div');
-    item.className = 'story-item';
-    item.dataset.id = story.id;
-
-    item.innerHTML = `
-      <img class="story-thumb" src="${story.thumb}" alt="${story.title}">
-      <div class="story-text">
-        <div class="story-title">${story.title}</div>
-        <div class="story-subtitle">${story.subtitle}</div>
-      </div>
-    `;
-
-    item.addEventListener('click', () => {
-      const info = storyOverlays[story.id];
-      if (!info) return;
-
-      highlightSelectedOverlay(story.id);
-      setActiveStory(story.id);
-
-      map.flyTo(info.center, story.id === 'tom-thumb' ? 7 : 9, {
-        duration: 0.9
-      });
-    });
-
-    listEl.appendChild(item);
-
-    if (index === 0) {
-      setActiveStory(story.id);
-    }
+document.querySelectorAll(".story-item").forEach(item => {
+  item.addEventListener("click", () => {
+    highlightStory(item.dataset.id);
   });
-
-  // Start centered roughly over Florida
-  map.setView([28.5, -80.7], 7);
-
-  // Bea helper
-  document.getElementById('bea-helper').addEventListener('click', () => {
-    map.flyTo([28.5, -80.7], 7, { duration: 1.0 });
-  });
+});
 </script>
 
 </body>
