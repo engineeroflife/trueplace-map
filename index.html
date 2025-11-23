@@ -1,31 +1,33 @@
 <script>
-  // Center on your exact coordinates (Titusville / Space Coast)
-  var center = [28.540278, -80.843056];
+  // Correct point at Titusville
+  const center = [28.540278, -80.843056];
 
   // Create map
-  var map = L.map('map').setView(center, 8); // zoom 8 to see most of Florida
+  var map = L.map('map').setView(center, 8);
 
   // Base layer
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
+    maxZoom: 19
   }).addTo(map);
 
-  // Bounds for the scaling overlay around your point
-  // (you can tweak 0.35 to make the icon bigger/smaller on the map)
-  var overlayBounds = L.latLngBounds(
-    [center[0] + 0.35, center[1] - 0.35], // north-west
-    [center[0] - 0.35, center[1] + 0.35]  // south-east
-  );
+  // Overlay size in degrees (~8 miles across)
+  const delta = 0.12;  
 
-  // Image overlay that scales WITH the map and stays locked to location
-  var storyUrl = 'https://trueplacegifts.com'; // <- change to your story link
-  var lensOverlay = L.imageOverlay(
+  // Bounds around your coordinate
+  const bounds = [
+    [center[0] + delta, center[1] - delta],  // NW
+    [center[0] - delta, center[1] + delta]   // SE
+  ];
+
+  // Add the image overlay that scales with the map
+  const overlay = L.imageOverlay(
     'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
-    overlayBounds
+    bounds,
+    { interactive: true }
   ).addTo(map);
 
-  // Make the overlay clickable: open your story in a new tab
-  lensOverlay.on('click', function () {
-    window.open(storyUrl, '_blank');
+  // Make it clickable (opens story link)
+  overlay.on('click', () => {
+    window.open('https://trueplacegifts.com', '_blank');
   });
 </script>
