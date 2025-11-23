@@ -8,53 +8,278 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
   <style>
-    #map {
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .layout {
+      display: flex;
       height: 100vh;
+      width: 100vw;
+    }
+
+    #sidebar {
+      width: 310px;
+      max-width: 40vw;
+      background: #ffffff;
+      border-right: 1px solid #e2e8f0;
+      box-shadow: 0 0 16px rgba(15, 23, 42, 0.08);
+      padding: 16px 14px;
+      overflow-y: auto;
+    }
+
+    #sidebar h1 {
+      font-size: 18px;
+      margin: 0 0 10px 2px;
+    }
+
+    .story-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
+    }
+
+    .story-item:hover {
+      background: #f1f5f9;
+      transform: translateY(-1px);
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+    }
+
+    .story-item.active {
+      background: #e0f7ee;
+      box-shadow: 0 0 0 1px #22c55e inset;
+    }
+
+    .story-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 9px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .story-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .story-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .story-subtitle {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
       width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        flex-direction: column;
+      }
+      #sidebar {
+        width: 100%;
+        max-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      #map {
+        height: calc(100vh - 180px);
+      }
     }
   </style>
 </head>
 
 <body>
 
-<div id="map"></div>
+<div class="layout">
+  <div id="sidebar">
+    <h1>True Place Stories</h1>
+    <div id="story-list"></div>
+  </div>
+  <div id="map"></div>
+</div>
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-// Titusville coordinates
-const center = [28.540278, -80.843056];
+  // --- Base map ----------------------------------------------------------
 
-// Create map
-var map = L.map('map').setView(center, 8);
+  // Start roughly centered on eastern US
+  const initialCenter = [30.0, -80.0];
+  const map = L.map('map').setView(initialCenter, 6);
 
-// Base map layer
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
-}).addTo(map);
+  // CARTO Voyager tiles (Option A you chose)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
+  }).addTo(map);
 
-// Overlay size (adjust if needed)
-const delta = 0.15;
+  // --- Story data --------------------------------------------------------
 
-// LatLngBounds for image overlay
-const bounds = L.latLngBounds(
-  [center[0] + delta, center[1] - delta],  // NW corner
-  [center[0] - delta, center[1] + delta]   // SE corner
-);
+  // All four stories use your magnifying-lens overlay
+  // NOTE: Replace `link` and `thumb` with your real Shopify URLs later.
+  const stories = [
+    {
+      id: 'windover',
+      title: 'From the Ice Age to the Space Age in Brevard County, FL',
+      subtitle: 'Windover People · Titusville, FL',
+      lat: 28.613,      // Windover site area
+      lng: -80.807,
+      link: 'https://trueplacegifts.com/blogs/stories/from-the-ice-age-to-the-space-age', // TODO: replace
+      thumb: 'https://via.placeholder.com/120x80?text=Windover'                             // TODO: replace
+    },
+    {
+      id: 'flip-coin',
+      title: 'The Coin That Flips the Super Bowl',
+      subtitle: 'The Highland Mint · Melbourne, FL',
+      lat: 28.0836,     // Highland Mint – Melbourne
+      lng: -80.6081,
+      link: 'https://trueplacegifts.com/blogs/stories/the-coin-that-flips-the-super-bowl', // TODO
+      thumb: 'https://via.placeholder.com/120x80?text=Flip+Coin'                            // TODO
+    },
+    {
+      id: 'space-ice-cream',
+      title: 'The Ice Cream That Wanted to Go to Space',
+      subtitle: 'Space Coast · Kennedy Space Center, FL',
+      lat: 28.5729,     // KSC Visitor Complex
+      lng: -80.6490,
+      link: 'https://trueplacegifts.com/blogs/stories/the-ice-cream-that-wanted-to-go-to-space', // TODO
+      thumb: 'https://via.placeholder.com/120x80?text=Space+Ice+Cream'                            // TODO
+    },
+    {
+      id: 'tom-thumb',
+      title: 'One of America’s First Global Celebrities – General Tom Thumb',
+      subtitle: 'Middleborough, Massachusetts',
+      lat: 41.8934,     // Middleborough, MA
+      lng: -70.9112,
+      link: 'https://trueplacegifts.com/blogs/stories/general-tom-thumb-the-smallest-giant', // TODO
+      thumb: 'https://via.placeholder.com/120x80?text=Tom+Thumb'                              // TODO
+    }
+  ];
 
-// Add scaling overlay
-const overlay = L.imageOverlay(
-  'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
-  bounds,
-  { interactive: true }
-).addTo(map);
+  const LENS_ICON_URL =
+    'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png';
 
-// Make icon clickable
-overlay.on('click', () => {
-  window.open('https://trueplacegifts.com', '_blank');
-});
+  // How big each lens appears on the map (in degrees of lat/lng)
+  const LENS_DELTA = 0.15; // increase for larger, decrease for smaller
+
+  // Store overlays by story id so we can interact with them
+  const storyOverlays = {};
+
+  // --- Create scaling overlays for each story ---------------------------
+
+  stories.forEach(story => {
+    const center = [story.lat, story.lng];
+
+    const bounds = L.latLngBounds(
+      [center[0] + LENS_DELTA, center[1] - LENS_DELTA], // NW
+      [center[0] - LENS_DELTA, center[1] + LENS_DELTA]  // SE
+    );
+
+    const overlay = L.imageOverlay(
+      LENS_ICON_URL,
+      bounds,
+      { interactive: true }
+    ).addTo(map);
+
+    overlay.on('click', () => {
+      window.open(story.link, '_blank');
+    });
+
+    storyOverlays[story.id] = { overlay, center };
+  });
+
+  // --- Add US state and Florida county boundaries -----------------------
+
+  // Soft US state outlines
+  fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json')
+    .then(r => r.json())
+    .then(geojson => {
+      L.geoJSON(geojson, {
+        style: {
+          color: '#8aa0a5',
+          weight: 1,
+          opacity: 0.5,
+          fillOpacity: 0
+        }
+      }).addTo(map);
+    })
+    .catch(err => console.warn('US states layer error', err));
+
+  // Florida county outlines
+  fetch('https://raw.githubusercontent.com/OpenDataDE/State-zip-codes/master/florida_counties.geojson')
+    .then(r => r.json())
+    .then(geojson => {
+      L.geoJSON(geojson, {
+        style: {
+          color: '#5bb388',
+          weight: 1.2,
+          opacity: 0.8,
+          fillOpacity: 0
+        }
+      }).addTo(map);
+    })
+    .catch(err => console.warn('FL counties layer error', err));
+
+  // --- Sidebar: clickable story list ------------------------------------
+
+  const listEl = document.getElementById('story-list');
+
+  function setActiveStory(id) {
+    document.querySelectorAll('.story-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.id === id);
+    });
+  }
+
+  stories.forEach((story, index) => {
+    const item = document.createElement('div');
+    item.className = 'story-item';
+    item.dataset.id = story.id;
+
+    item.innerHTML = `
+      <img class="story-thumb" src="${story.thumb}" alt="${story.title}">
+      <div class="story-text">
+        <div class="story-title">${story.title}</div>
+        <div class="story-subtitle">${story.subtitle}</div>
+      </div>
+    `;
+
+    item.addEventListener('click', () => {
+      const info = storyOverlays[story.id];
+      if (!info) return;
+
+      setActiveStory(story.id);
+      map.flyTo(info.center, story.id === 'tom-thumb' ? 7 : 9, {
+        duration: 0.9
+      });
+    });
+
+    listEl.appendChild(item);
+
+    if (index === 0) {
+      setActiveStory(story.id);
+    }
+  });
+
+  // Start centered roughly over Florida
+  map.setView([28.5, -80.7], 7);
 </script>
 
 </body>
