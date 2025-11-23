@@ -19,9 +19,9 @@ const bounds = L.latLngBounds(
   [center[0] - delta, center[1] + delta]   // SE corner
 );
 
-// Add SVG or PNG as a scaling image overlay
+// Add scaling overlay
 const overlay = L.imageOverlay(
-   'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
+  'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png',
   bounds,
   { interactive: true }
 ).addTo(map);
