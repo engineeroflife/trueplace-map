@@ -19,6 +19,7 @@
       display: flex;
       height: 100vh;
       width: 100vw;
+      position: relative;
     }
 
     #sidebar {
@@ -29,6 +30,7 @@
       box-shadow: 0 0 16px rgba(15, 23, 42, 0.08);
       padding: 16px 14px;
       overflow-y: auto;
+      z-index: 500;
     }
 
     #sidebar h1 {
@@ -86,6 +88,38 @@
       flex: 1;
       height: 100%;
       width: 100%;
+      z-index: 100;
+    }
+
+    /* Bea helper */
+    #bea-helper {
+      position: fixed;
+      bottom: 20px;
+      left: 24px;
+      z-index: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    #bea-img {
+      height: 120px;
+      transition: transform 0.2s ease;
+    }
+
+    #bea-helper:hover #bea-img {
+      transform: scale(1.06);
+    }
+
+    #bea-bubble {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 8px 10px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+      font-size: 12px;
+      max-width: 220px;
+      line-height: 1.3;
     }
 
     @media (max-width: 768px) {
@@ -101,6 +135,16 @@
       #map {
         height: calc(100vh - 180px);
       }
+      #bea-helper {
+        left: 12px;
+        bottom: 12px;
+      }
+      #bea-img {
+        height: 100px;
+      }
+      #bea-bubble {
+        max-width: 180px;
+      }
     }
   </style>
 </head>
@@ -115,17 +159,28 @@
   <div id="map"></div>
 </div>
 
+<!-- Bea the Otter helper -->
+<div id="bea-helper">
+  <img
+    id="bea-img"
+    src="https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/Otter_BEa_nov25_1.webp"
+    alt="Bea the Otter"
+  />
+  <div id="bea-bubble">
+    Hi, I’m Bea! Tap any green lens on the map to explore a story from that place.
+  </div>
+</div>
+
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
   // --- Base map ----------------------------------------------------------
 
-  // Start roughly centered on eastern US
   const initialCenter = [30.0, -80.0];
   const map = L.map('map').setView(initialCenter, 6);
 
-  // CARTO Voyager tiles (Option A you chose)
+  // CARTO Voyager tiles
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
@@ -133,54 +188,63 @@
 
   // --- Story data --------------------------------------------------------
 
-  // All four stories use your magnifying-lens overlay
-  // NOTE: Replace `link` and `thumb` with your real Shopify URLs later.
- const stories = [
-  {
-    id: 'windover',
-    title: 'From the Ice Age to the Space Age in Brevard County, FL',
-    subtitle: 'Windover People · Titusville, FL',
-    lat: 28.613,
-    lng: -80.807,
-    delta: 0.15,
-    link: 'https://trueplacegifts.com/blogs/stories/from-the-ice-age-to-the-space-age',
-    thumb: 'https://via.placeholder.com/120x80?text=Windover'
-  },
-  {
-    id: 'flip-coin',
-    title: 'The Coin That Flips the Super Bowl',
-    subtitle: 'The Highland Mint · Melbourne, FL',
-    lat: 28.0836,
-    lng: -80.6081,
-    delta: 0.15,
-    link: 'https://trueplacegifts.com/blogs/stories/the-coin-that-flips-the-super-bowl',
-    thumb: 'https://via.placeholder.com/120x80?text=Flip+Coin'
-  },
-  {
-    id: 'space-ice-cream',
-    title: 'The Ice Cream That Wanted to Go to Space',
-    subtitle: 'Space Coast · Kennedy Space Center, FL',
-    lat: 28.5729,
-    lng: -80.6490,
-
+  const stories = [
+    {
+      id: 'windover',
+      title: 'From the Ice Age to the Space Age in Brevard County, FL',
+      subtitle: 'Windover People · Titusville, FL',
+      lat: 28.613,
+      lng: -80.807,
+      delta: 0.08,
+      link: 'https://trueplacegifts.com', // TODO: replace with real blog link
+      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/windover.jpg'
+    },
+    {
+      id: 'flip-coin',
+      title: 'The Coin That Flips the Super Bowl',
+      subtitle: 'The Highland Mint · Melbourne, FL',
+      lat: 28.0836,
+      lng: -80.6081,
+      delta: 0.08,
+      link: 'https://trueplacegifts.com', // TODO: replace
+      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/FlipCoin.jpg'
+    },
+    {
+      id: 'space-ice-cream',
+      title: 'The Ice Cream That Wanted to Go to Space',
+      subtitle: 'Space Coast · Kennedy Space Center, FL',
+      lat: 28.5729,
+      lng: -80.6490,
+      delta: 0.08,
+      link: 'https://trueplacegifts.com', // TODO: replace
+      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/icecream.jpg'
+    },
+    {
+      id: 'tom-thumb',
+      title: 'One of America’s First Global Celebrities – General Tom Thumb',
+      subtitle: 'Middleborough, Massachusetts',
+      lat: 41.8934,
+      lng: -70.9112,
+      delta: 0.4, // larger so visible when zoomed out
+      link: 'https://trueplacegifts.com', // TODO: replace
+      thumb: 'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/TomThumb.jpg'
+    }
+  ];
 
   const LENS_ICON_URL =
     'https://raw.githubusercontent.com/engineeroflife/trueplace-map/main/magnifying_gift_icon_green_transparent.png';
 
-  // How big each lens appears on the map (in degrees of lat/lng)
-  const LENS_DELTA = 0.15; // increase for larger, decrease for smaller
-
-  // Store overlays by story id so we can interact with them
   const storyOverlays = {};
 
   // --- Create scaling overlays for each story ---------------------------
 
   stories.forEach(story => {
     const center = [story.lat, story.lng];
+    const delta = story.delta;
 
     const bounds = L.latLngBounds(
-      [center[0] + LENS_DELTA, center[1] - LENS_DELTA], // NW
-      [center[0] - LENS_DELTA, center[1] + LENS_DELTA]  // SE
+      [center[0] + delta, center[1] - delta],
+      [center[0] - delta, center[1] + delta]
     );
 
     const overlay = L.imageOverlay(
@@ -196,9 +260,9 @@
     storyOverlays[story.id] = { overlay, center };
   });
 
-  // --- Add US state and Florida county boundaries -----------------------
+  // --- US state and Florida county boundaries ---------------------------
 
-  // Soft US state outlines
+  // US states
   fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json')
     .then(r => r.json())
     .then(geojson => {
@@ -213,7 +277,7 @@
     })
     .catch(err => console.warn('US states layer error', err));
 
-  // Florida county outlines
+  // Florida counties
   fetch('https://raw.githubusercontent.com/OpenDataDE/State-zip-codes/master/florida_counties.geojson')
     .then(r => r.json())
     .then(geojson => {
@@ -268,8 +332,15 @@
     }
   });
 
-  // Start centered roughly over Florida
+  // Start roughly centered over Florida
   map.setView([28.5, -80.7], 7);
+
+  // --- Bea helper click -------------------------------------------------
+
+  document.getElementById('bea-helper').addEventListener('click', () => {
+    // For now, Bea recenters the map on Florida
+    map.flyTo([28.5, -80.7], 7, { duration: 1.0 });
+  });
 </script>
 
 </body>
