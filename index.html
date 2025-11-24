@@ -323,8 +323,7 @@
     marker.on("click", () => {
 
         console.log("MARKER CLICKED:", story.id);   // <<< ADD THIS LINE
-
-        window.location.href = story.url;
+window.top.location.href = story.url;
     });
 
     markers[story.id] = marker;
