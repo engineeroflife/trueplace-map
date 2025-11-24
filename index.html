@@ -316,18 +316,20 @@
   });
 
   // ---- Create markers ----
-  const markers = {};
-
-  stories.forEach(story => {
+ stories.forEach(story => {
     const marker = L.marker(story.coords, { icon: tpIcon }).addTo(map);
 
     /* CLICK OPENS SHOPIFY STORY */
     marker.on("click", () => {
-      window.location.href = story.url;
+
+        console.log("MARKER CLICKED:", story.id);   // <<< ADD THIS LINE
+
+        window.location.href = story.url;
     });
 
     markers[story.id] = marker;
-  });
+});
+
 
   // ---- Highlight + zoom ----
   function highlightStory(id) {
