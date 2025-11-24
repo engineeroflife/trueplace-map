@@ -303,15 +303,17 @@
 
   // ---- Create markers ----
   const markers = {};
-
-  stories.forEach(story => {
+stories.forEach(story => {
     const marker = L.marker(story.coords, { icon: tpIcon }).addTo(map);
-    markers[story.id] = marker;
 
-    marker.on('click', () => {
-      highlightStory(story.id);
+    // Add click event to redirect to Shopify story
+    marker.on("click", () => {
+        window.location.href = story.url;
     });
-  });
+
+    markers[story.id] = marker;
+});
+
 
   // ---- Highlight + zoom function ----
   function highlightStory(id) {
