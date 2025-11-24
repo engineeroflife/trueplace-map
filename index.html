@@ -122,6 +122,16 @@
       background: transparent;
       border: none;
     }
+/* FIX MARKER CLICK BLOCKING */
+.tp-marker {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+.tp-marker-inner,
+.tp-marker-plus {
+  pointer-events: none !important;
+}
 
     .tp-marker-inner {
       width: 12px;
