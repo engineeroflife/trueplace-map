@@ -359,7 +359,7 @@ window.top.location.href = story.url;
       const id = item.dataset.id;
       highlightStory(id);
       const story = stories.find(s => s.id === id);
-      window.location.href = story.url;
+     window.top.location.href = story.url;
     });
   });
 
