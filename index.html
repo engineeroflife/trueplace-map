@@ -107,6 +107,16 @@
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.28);
     }
 
+    /* --- Marker pointer fixes (important!) --- */
+    .tp-marker {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    .tp-marker-inner,
+    .tp-marker-plus {
+      pointer-events: none;
+    }
+
     /* Tiny custom marker (12px) */
     .tp-marker.leaflet-div-icon {
       background: transparent;
@@ -153,7 +163,7 @@
       top: 2px;
     }
 
-    /* Active marker: glow + soft pulse */
+    /* Active marker glow */
     .tp-marker-active .tp-marker-inner {
       box-shadow:
         0 0 6px rgba(34, 197, 94, 0.9),
@@ -211,7 +221,7 @@
   <div class="story-item" data-id="iceage">
     <img class="story-thumb" src="windover.jpg" alt="Windover People">
     <div>
-      <div class="story-text-title">From the Ice Age to the Space Age in Brevard County, FL</div>
+      <div class="story-text-title">From the Ice Age to the Space Age</div>
       <div class="story-text-sub">Windover People · Titusville, FL</div>
     </div>
   </div>
@@ -228,15 +238,15 @@
     <img class="story-thumb" src="icecream.jpg" alt="Space Ice Cream Story">
     <div>
       <div class="story-text-title">The Ice Cream That Wanted to Go to Space</div>
-      <div class="story-text-sub">Space Coast · Kennedy Space Center, FL</div>
+      <div class="story-text-sub">Kennedy Space Center, FL</div>
     </div>
   </div>
 
   <div class="story-item" data-id="tomthumb">
     <img class="story-thumb" src="TomThumb.jpg" alt="Tom Thumb Story">
     <div>
-      <div class="story-text-title">One of America’s First Global Celebrities — General Tom Thumb</div>
-      <div class="story-text-sub">Middleborough, Massachusetts</div>
+      <div class="story-text-title">General Tom Thumb</div>
+      <div class="story-text-sub">Middleborough, MA</div>
     </div>
   </div>
 </div>
@@ -256,31 +266,35 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-  // ---- Story data (coords + zoom) ----
+  /* ---- STORIES WITH URLS ---- */
   const stories = [
     {
       id: "iceage",
-      coords: [28.613, -80.807], // Titusville
-      zoom: 11
+      coords: [28.613, -80.807],
+      zoom: 11,
+      url: "https://trueplacegifts.com/blogs/stories/windover-people"
     },
     {
       id: "flipcoin",
-      coords: [28.083, -80.608], // Melbourne
-      zoom: 11
+      coords: [28.083, -80.608],
+      zoom: 11,
+      url: "https://trueplacegifts.com/blogs/stories/the-coin-that-flips-the-super-bowl"
     },
     {
       id: "icecream",
-      coords: [28.573, -80.646], // KSC
-      zoom: 11
+      coords: [28.573, -80.646],
+      zoom: 11,
+      url: "https://trueplacegifts.com/blogs/stories/the-ice-cream-that-wanted-to-go-to-space"
     },
     {
       id: "tomthumb",
-      coords: [41.893, -70.910], // Middleborough, MA
-      zoom: 13
+      coords: [41.893, -70.910],
+      zoom: 13,
+      url: "https://trueplacegifts.com/blogs/stories/general-tom-thumb-middleborough"
     }
   ];
 
-  // ---- Map setup (Carto Light) ----
+  // ---- Map setup ----
   const map = L.map('map').setView([28.3, -81.2], 7);
 
   L.tileLayer(
@@ -293,7 +307,7 @@
     }
   ).addTo(map);
 
-  // ---- Custom tiny marker icon (12px circle+plus) ----
+  // ---- Custom tiny marker icon ----
   const tpIcon = L.divIcon({
     className: 'tp-marker',
     html: '<div class="tp-marker-inner"><div class="tp-marker-plus"></div></div>',
@@ -303,26 +317,24 @@
 
   // ---- Create markers ----
   const markers = {};
-stories.forEach(story => {
+
+  stories.forEach(story => {
     const marker = L.marker(story.coords, { icon: tpIcon }).addTo(map);
 
-    // Add click event to redirect to Shopify story
+    /* CLICK OPENS SHOPIFY STORY */
     marker.on("click", () => {
-        window.location.href = story.url;
+      window.location.href = story.url;
     });
 
     markers[story.id] = marker;
-});
+  });
 
-
-  // ---- Highlight + zoom function ----
+  // ---- Highlight + zoom ----
   function highlightStory(id) {
-    // Sidebar state
     document.querySelectorAll('.story-item').forEach(el => {
       el.classList.toggle('active', el.dataset.id === id);
     });
 
-    // Marker visual state
     stories.forEach(story => {
       const m = markers[story.id];
       const el = m.getElement();
@@ -336,21 +348,21 @@ stories.forEach(story => {
       }
     });
 
-    // Fly to selected place
-    const story = stories.find(s => s.id === id);
-    if (story) {
-      map.flyTo(story.coords, story.zoom, { duration: 0.8 });
-    }
+    const s = stories.find(st => st.id === id);
+    if (s) map.flyTo(s.coords, s.zoom, { duration: 0.8 });
   }
 
-  // ---- Sidebar click handlers ----
+  // Sidebar clicks ALSO open stories
   document.querySelectorAll('.story-item').forEach(item => {
     item.addEventListener('click', () => {
-      highlightStory(item.dataset.id);
+      const id = item.dataset.id;
+      highlightStory(id);
+      const story = stories.find(s => s.id === id);
+      window.location.href = story.url;
     });
   });
 
-  // Start focused on Florida + highlight first story
+  // Initial view
   map.setView([28.5, -80.7], 7);
   highlightStory('iceage');
 </script>
