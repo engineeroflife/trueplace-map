@@ -107,94 +107,41 @@
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.28);
     }
 
-    /* --- Marker pointer fixes (important!) --- */
-    .tp-marker {
-      pointer-events: auto;
-      cursor: pointer;
-    }
-    .tp-marker-inner,
-    .tp-marker-plus {
-      pointer-events: none;
-    }
-
-    /* Tiny custom marker (12px) */
-    .tp-marker.leaflet-div-icon {
+    /* Location pin icon (divIcon wrapper) */
+    .tp-pin-icon.leaflet-div-icon {
       background: transparent;
       border: none;
-    }
-/* FIX MARKER CLICK BLOCKING */
-.tp-marker {
-  pointer-events: auto !important;
-  cursor: pointer;
-}
-
-.tp-marker-inner,
-.tp-marker-plus {
-  pointer-events: none !important;
-}
-
-    .tp-marker-inner {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #39A96B;
-      border: 2px solid #1F7A47;
-      box-sizing: content-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      transform-origin: 50% 100%;
     }
 
-    .tp-marker-plus {
-      width: 6px;
-      height: 6px;
-      position: relative;
+    .tp-pin-wrapper {
+      width: 24px;
+      height: 24px;
+      transform-origin: 50% 100%;
+      transition: transform 0.15s ease-out, filter 0.15s ease-out;
     }
 
-    .tp-marker-plus::before,
-    .tp-marker-plus::after {
-      content: "";
-      position: absolute;
-      background: #ffffff;
-      border-radius: 1px;
+    .tp-pin-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
-    .tp-marker-plus::before {
-      width: 2px;
-      height: 6px;
-      left: 2px;
-      top: 0;
+    /* Active (selected) pin: glow + soft pulse */
+    .tp-pin-active {
+      animation: tpPinPulse 0.9s ease-out 0s 2;
     }
 
-    .tp-marker-plus::after {
-      width: 6px;
-      height: 2px;
-      left: 0;
-      top: 2px;
+    .tp-pin-active .tp-pin-wrapper {
+      filter:
+        drop-shadow(0 0 4px rgba(34, 197, 94, 0.9))
+        drop-shadow(0 0 8px rgba(34, 197, 94, 0.7));
     }
 
-    /* Active marker glow */
-    .tp-marker-active .tp-marker-inner {
-      box-shadow:
-        0 0 6px rgba(34, 197, 94, 0.9),
-        0 0 10px rgba(34, 197, 94, 0.7);
-      animation: tpPulse 0.9s ease-out 0s 2;
-      transform: scale(1.4);
-    }
-
-    @keyframes tpPulse {
-      0% {
-        transform: scale(1.0);
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.8);
-      }
-      50% {
-        transform: scale(1.45);
-        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.0);
-      }
-      100% {
-        transform: scale(1.4);
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.0);
-      }
+    @keyframes tpPinPulse {
+      0%   { transform: scale(1.0); }
+      50%  { transform: scale(1.18); }
+      100% { transform: scale(1.0); }
     }
 
     @media (max-width: 768px) {
@@ -231,7 +178,7 @@
   <div class="story-item" data-id="iceage">
     <img class="story-thumb" src="windover.jpg" alt="Windover People">
     <div>
-      <div class="story-text-title">From the Ice Age to the Space Age</div>
+      <div class="story-text-title">From the Ice Age to the Space Age in Brevard County, FL</div>
       <div class="story-text-sub">Windover People · Titusville, FL</div>
     </div>
   </div>
@@ -248,15 +195,15 @@
     <img class="story-thumb" src="icecream.jpg" alt="Space Ice Cream Story">
     <div>
       <div class="story-text-title">The Ice Cream That Wanted to Go to Space</div>
-      <div class="story-text-sub">Kennedy Space Center, FL</div>
+      <div class="story-text-sub">Space Coast · Kennedy Space Center, FL</div>
     </div>
   </div>
 
   <div class="story-item" data-id="tomthumb">
     <img class="story-thumb" src="TomThumb.jpg" alt="Tom Thumb Story">
     <div>
-      <div class="story-text-title">General Tom Thumb</div>
-      <div class="story-text-sub">Middleborough, MA</div>
+      <div class="story-text-title">One of America’s First Global Celebrities — General Tom Thumb</div>
+      <div class="story-text-sub">Middleborough, Massachusetts</div>
     </div>
   </div>
 </div>
@@ -268,7 +215,7 @@
 <div id="bea-message">
   <img id="bea-img" src="Otter_BEa_nov25_1.webp" alt="Bea the Otter">
   <div id="bea-text">
-    Hi, I'm Bea! Tap any green lens on the map to explore a story from that place.
+    Hi, I'm Bea! Tap any green pin on the map to explore a story from that place.
   </div>
 </div>
 
@@ -276,36 +223,32 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-  /* ---- STORIES WITH URLS ---- */
+  // ---- Story data (coords + zoom) ----
   const stories = [
     {
       id: "iceage",
-      coords: [28.613, -80.807],
-      zoom: 11,
-      url: "https://trueplacegifts.com/blogs/stories/windover-people"
+      coords: [28.613, -80.807], // Titusville
+      zoom: 11
     },
     {
       id: "flipcoin",
-      coords: [28.083, -80.608],
-      zoom: 11,
-      url: "https://trueplacegifts.com/blogs/stories/the-coin-that-flips-the-super-bowl"
+      coords: [28.083, -80.608], // Melbourne
+      zoom: 11
     },
     {
       id: "icecream",
-      coords: [28.573, -80.646],
-      zoom: 11,
-      url: "https://trueplacegifts.com/blogs/stories/the-ice-cream-that-wanted-to-go-to-space"
+      coords: [28.573, -80.646], // KSC
+      zoom: 11
     },
     {
       id: "tomthumb",
-      coords: [41.893, -70.910],
-      zoom: 13,
-      url: "https://trueplacegifts.com/blogs/stories/general-tom-thumb-middleborough"
+      coords: [41.893, -70.910], // Middleborough, MA
+      zoom: 13
     }
   ];
 
-  // ---- Map setup ----
-  const map = L.map('map').setView([28.3, -81.2], 7);
+  // ---- Map setup (Carto Light) ----
+  const map = L.map('map').setView([28.5, -80.7], 7);
 
   L.tileLayer(
     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
@@ -317,64 +260,96 @@
     }
   ).addTo(map);
 
-  // ---- Custom tiny marker icon ----
-  const tpIcon = L.divIcon({
-    className: 'tp-marker',
-    html: '<div class="tp-marker-inner"><div class="tp-marker-plus"></div></div>',
-    iconSize: [12, 12],
-    iconAnchor: [6, 6]
+  // ---- Custom green location pin (SVG inside divIcon) ----
+  const pinSVG =
+    '<div class="tp-pin-wrapper">' +
+      '<svg class="tp-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M12 2C8.7 2 6 4.7 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.3-2.7-6-6-6zm0 8a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"' +
+              ' fill="#22c55e" stroke="#166534" stroke-width="1.7" />' +
+      '</svg>' +
+    '</div>';
+
+  const pinIcon = L.divIcon({
+    className: 'tp-pin-icon',
+    html: pinSVG,
+    iconSize: [24, 24],
+    iconAnchor: [12, 24]  // bottom point of the pin
   });
 
   // ---- Create markers ----
- stories.forEach(story => {
-    const marker = L.marker(story.coords, { icon: tpIcon }).addTo(map);
+  const markers = {};
 
-    /* CLICK OPENS SHOPIFY STORY */
-    marker.on("click", () => {
-
-        console.log("MARKER CLICKED:", story.id);   // <<< ADD THIS LINE
-window.top.location.href = story.url;
-    });
-
+  stories.forEach(story => {
+    const marker = L.marker(story.coords, { icon: pinIcon }).addTo(map);
     markers[story.id] = marker;
-});
 
+    marker.on('click', () => {
+      highlightStory(story.id);
+    });
+  });
 
-  // ---- Highlight + zoom ----
+  // ---- Dynamic pin scaling with zoom ----
+  function getScaleForZoom(z) {
+    if (z <= 5) return 1.9;      // very big when far out
+    if (z <= 7) return 1.6;
+    if (z <= 10) return 1.3;
+    if (z <= 13) return 1.0;
+    return 0.85;                // extra small when very close
+  }
+
+  function updatePinScale() {
+    const z = map.getZoom();
+    const scale = getScaleForZoom(z);
+
+    Object.values(markers).forEach(m => {
+      const el = m.getElement();
+      if (!el) return;
+      const wrapper = el.querySelector('.tp-pin-wrapper');
+      if (!wrapper) return;
+      wrapper.style.transform = 'scale(' + scale + ')';
+    });
+  }
+
+  map.on('zoomend', updatePinScale);
+
+  // ---- Highlight + zoom to story ----
   function highlightStory(id) {
+    // Sidebar active state
     document.querySelectorAll('.story-item').forEach(el => {
       el.classList.toggle('active', el.dataset.id === id);
     });
 
+    // Marker visual state
     stories.forEach(story => {
       const m = markers[story.id];
       const el = m.getElement();
       if (!el) return;
+
       if (story.id === id) {
-        el.classList.add('tp-marker-active');
+        el.classList.add('tp-pin-active');
         m.setZIndexOffset(1000);
       } else {
-        el.classList.remove('tp-marker-active');
+        el.classList.remove('tp-pin-active');
         m.setZIndexOffset(0);
       }
     });
 
-    const s = stories.find(st => st.id === id);
-    if (s) map.flyTo(s.coords, s.zoom, { duration: 0.8 });
+    // Fly to selected location
+    const story = stories.find(s => s.id === id);
+    if (story) {
+      map.flyTo(story.coords, story.zoom, { duration: 0.8 });
+    }
   }
 
-  // Sidebar clicks ALSO open stories
+  // ---- Sidebar click handlers ----
   document.querySelectorAll('.story-item').forEach(item => {
     item.addEventListener('click', () => {
-      const id = item.dataset.id;
-      highlightStory(id);
-      const story = stories.find(s => s.id === id);
-     window.top.location.href = story.url;
+      highlightStory(item.dataset.id);
     });
   });
 
-  // Initial view
-  map.setView([28.5, -80.7], 7);
+  // Initial view + scaling
+  updatePinScale();
   highlightStory('iceage');
 </script>
 
