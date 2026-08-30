@@ -250,15 +250,13 @@
   // ---- Map setup (Carto Light) ----
   const map = L.map('map').setView([28.5, -80.7], 7);
 
-  L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-    {
-      maxZoom: 19,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> ' +
-        '&copy; <a href="https://carto.com/attributions">CARTO</a>'
-    }
-  ).addTo(map);
+L.tileLayer(
+  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }
+).addTo(map);
 
   // ---- Custom green location pin (SVG inside divIcon) ----
   const pinSVG =
