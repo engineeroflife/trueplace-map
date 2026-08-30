@@ -17,7 +17,10 @@
       overflow: hidden;
     }
 
-    /* Sidebar */
+    /* =========================
+       SIDEBAR
+       ========================= */
+
     #sidebar {
       width: 290px;
       background: #ffffff;
@@ -26,6 +29,7 @@
       overflow-y: auto;
       box-shadow: 0 0 14px rgba(15, 23, 42, 0.12);
       z-index: 500;
+      box-sizing: border-box;
     }
 
     .back-home {
@@ -91,14 +95,20 @@
       margin-top: 2px;
     }
 
-    /* Map */
+    /* =========================
+       MAP
+       ========================= */
+
     #map {
       flex: 1;
       height: 100%;
       width: 100%;
     }
 
-    /* Bea */
+    /* =========================
+       BEA
+       ========================= */
+
     #bea-message {
       position: absolute;
       bottom: 20px;
@@ -106,11 +116,14 @@
       display: flex;
       align-items: flex-end;
       z-index: 900;
+      pointer-events: none;
     }
 
     #bea-img {
       width: 95px;
+      height: auto;
       margin-right: 10px;
+      display: block;
     }
 
     #bea-text {
@@ -120,10 +133,16 @@
       border: 1px solid #cbd5e1;
       width: 220px;
       font-size: 13px;
+      line-height: 1.35;
+      color: #1e293b;
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.28);
+      box-sizing: border-box;
     }
 
-    /* Green location pins */
+    /* =========================
+       GREEN LOCATION PINS
+       ========================= */
+
     .tp-pin-icon.leaflet-div-icon {
       background: transparent;
       border: none;
@@ -134,7 +153,9 @@
       width: 24px;
       height: 24px;
       transform-origin: 50% 100%;
-      transition: transform 0.15s ease-out, filter 0.15s ease-out;
+      transition:
+        transform 0.15s ease-out,
+        filter 0.15s ease-out;
     }
 
     .tp-pin-svg {
@@ -143,6 +164,7 @@
       display: block;
     }
 
+    /* Selected pin */
     .tp-pin-active {
       animation: tpPinPulse 0.9s ease-out 0s 2;
     }
@@ -154,12 +176,25 @@
     }
 
     @keyframes tpPinPulse {
-      0%   { transform: scale(1.0); }
-      50%  { transform: scale(1.18); }
-      100% { transform: scale(1.0); }
+      0% {
+        transform: scale(1.0);
+      }
+
+      50% {
+        transform: scale(1.18);
+      }
+
+      100% {
+        transform: scale(1.0);
+      }
     }
 
+    /* =========================
+       MOBILE
+       ========================= */
+
     @media (max-width: 768px) {
+
       body {
         flex-direction: column;
       }
@@ -192,57 +227,91 @@
 
 <body>
 
-<!-- SIDEBAR -->
+<!-- =========================
+     SIDEBAR
+     ========================= -->
+
 <div id="sidebar">
 
-  <a href="https://trueplacegifts.com/" class="back-home">
+  <a
+    href="https://engineeroflife.github.io/trueplacegifts/index.html"
+    class="back-home"
+  >
     ← Back to Main Menu
   </a>
 
   <h2>True Place Stories</h2>
 
+  <!-- Windover -->
   <div class="story-item" data-id="iceage">
-    <img class="story-thumb" src="windover.jpg" alt="Windover People">
+    <img
+      class="story-thumb"
+      src="windover.jpg"
+      alt="Windover People"
+    >
+
     <div>
       <div class="story-text-title">
         From the Ice Age to the Space Age in Brevard County, FL
       </div>
+
       <div class="story-text-sub">
         Windover People · Titusville, FL
       </div>
     </div>
   </div>
 
+  <!-- Super Bowl Coin -->
   <div class="story-item" data-id="flipcoin">
-    <img class="story-thumb" src="FlipCoin.jpg" alt="Flip Coin Story">
+    <img
+      class="story-thumb"
+      src="FlipCoin.jpg"
+      alt="Flip Coin Story"
+    >
+
     <div>
       <div class="story-text-title">
         The Coin That Flips the Super Bowl
       </div>
+
       <div class="story-text-sub">
         The Highland Mint · Melbourne, FL
       </div>
     </div>
   </div>
 
+  <!-- Space Ice Cream -->
   <div class="story-item" data-id="icecream">
-    <img class="story-thumb" src="icecream.jpg" alt="Space Ice Cream Story">
+    <img
+      class="story-thumb"
+      src="icecream.jpg"
+      alt="Space Ice Cream Story"
+    >
+
     <div>
       <div class="story-text-title">
         The Ice Cream That Wanted to Go to Space
       </div>
+
       <div class="story-text-sub">
         Space Coast · Kennedy Space Center, FL
       </div>
     </div>
   </div>
 
+  <!-- Tom Thumb -->
   <div class="story-item" data-id="tomthumb">
-    <img class="story-thumb" src="TomThumb.jpg" alt="Tom Thumb Story">
+    <img
+      class="story-thumb"
+      src="TomThumb.jpg"
+      alt="Tom Thumb Story"
+    >
+
     <div>
       <div class="story-text-title">
         One of America’s First Global Celebrities — General Tom Thumb
       </div>
+
       <div class="story-text-sub">
         Middleborough, Massachusetts
       </div>
@@ -251,10 +320,18 @@
 
 </div>
 
-<!-- MAP -->
+
+<!-- =========================
+     MAP
+     ========================= -->
+
 <div id="map"></div>
 
-<!-- BEA -->
+
+<!-- =========================
+     BEA
+     ========================= -->
+
 <div id="bea-message">
 
   <img
@@ -269,45 +346,67 @@
 
 </div>
 
+
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+
 <script>
 
-  // Story locations
+  /* =========================
+     STORY DATA
+     ========================= */
+
   const stories = [
+
     {
       id: "iceage",
       title: "From the Ice Age to the Space Age",
       coords: [28.613, -80.807],
       zoom: 11,
-      url: "https://trueplacegifts.com/windover.html"
+      url: "https://engineeroflife.github.io/trueplacegifts/windover.html"
     },
+
     {
       id: "flipcoin",
       title: "The Coin That Flips the Super Bowl",
       coords: [28.083, -80.608],
       zoom: 11,
-      url: "https://trueplacegifts.com/super-bowl-coin.html"
+      url: "https://engineeroflife.github.io/trueplacegifts/super-bowl-coin.html"
     },
+
     {
       id: "icecream",
       title: "The Ice Cream That Wanted to Go to Space",
       coords: [28.573, -80.646],
       zoom: 11,
-      url: "https://trueplacegifts.com/space-ice-cream.html"
+      url: "https://engineeroflife.github.io/trueplacegifts/space-ice-cream.html"
     },
+
     {
       id: "tomthumb",
       title: "General Tom Thumb",
       coords: [41.893, -70.910],
       zoom: 13,
-      url: "https://trueplacegifts.com/tom-thumb.html"
+      url: "https://engineeroflife.github.io/trueplacegifts/tom-thumb.html"
     }
+
   ];
 
-  // Map
-  const map = L.map('map').setView([28.5, -80.7], 7);
+
+  /* =========================
+     MAP SETUP
+     ========================= */
+
+  const map = L.map('map').setView(
+    [28.5, -80.7],
+    7
+  );
+
+
+  /* =========================
+     MAP LAYERS
+     ========================= */
 
   const streetMap = L.tileLayer(
     'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -317,6 +416,7 @@
     }
   );
 
+
   const satelliteMap = L.tileLayer(
     'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     {
@@ -325,76 +425,144 @@
     }
   );
 
+
   streetMap.addTo(map);
+
 
   const baseMaps = {
     "Map": streetMap,
     "Satellite": satelliteMap
   };
 
+
   L.control.layers(baseMaps).addTo(map);
 
 
-  // Green pin
+  /* =========================
+     GREEN PIN
+     ========================= */
+
   const pinSVG =
     '<div class="tp-pin-wrapper">' +
-      '<svg class="tp-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
-        '<path d="M12 2C8.7 2 6 4.7 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.3-2.7-6-6-6zm0 8a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"' +
-        ' fill="#22c55e" stroke="#166534" stroke-width="1.7" />' +
+
+      '<svg ' +
+        'class="tp-pin-svg" ' +
+        'viewBox="0 0 24 24" ' +
+        'xmlns="http://www.w3.org/2000/svg">' +
+
+        '<path ' +
+          'd="M12 2C8.7 2 6 4.7 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.3-2.7-6-6-6zm0 8a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"' +
+          ' fill="#22c55e"' +
+          ' stroke="#166534"' +
+          ' stroke-width="1.7" />' +
+
       '</svg>' +
+
     '</div>';
 
+
   const pinIcon = L.divIcon({
+
     className: 'tp-pin-icon',
+
     html: pinSVG,
+
     iconSize: [24, 24],
+
     iconAnchor: [12, 24]
+
   });
 
 
-  // Markers
+  /* =========================
+     CREATE MARKERS
+     ========================= */
+
   const markers = {};
+
 
   stories.forEach(story => {
 
     const marker = L.marker(
       story.coords,
-      { icon: pinIcon }
+      {
+        icon: pinIcon
+      }
     ).addTo(map);
+
 
     markers[story.id] = marker;
 
+
+    /* Popup */
+
     marker.bindPopup(
+
       '<div style="text-align:center;">' +
-        '<strong>' + story.title + '</strong><br><br>' +
-        '<a href="' + story.url + '" ' +
-        'style="font-weight:600; text-decoration:none; color:#1e3a5f;">' +
-        'Read the Story →' +
+
+        '<strong>' +
+          story.title +
+        '</strong>' +
+
+        '<br><br>' +
+
+        '<a href="' +
+          story.url +
+          '" ' +
+
+          'style="' +
+            'font-weight:600;' +
+            'text-decoration:none;' +
+            'color:#1e3a5f;' +
+          '">' +
+
+          'Read the Story →' +
+
         '</a>' +
+
       '</div>'
+
     );
 
+
+    /* Pin click */
+
     marker.on('click', () => {
+
       highlightStory(story.id);
+
       marker.openPopup();
+
     });
 
   });
 
 
-  // Pin size by zoom
+  /* =========================
+     PIN SIZE BY ZOOM
+     ========================= */
+
   function getScaleForZoom(z) {
+
     if (z <= 5) return 0.75;
+
     if (z <= 7) return 0.85;
+
     if (z <= 10) return 0.95;
-    if (z <= 13) return 0.9;
-    return 0.8;
+
+    if (z <= 13) return 0.90;
+
+    return 0.80;
+
   }
+
 
   function updatePinScale() {
 
     const z = map.getZoom();
+
     const scale = getScaleForZoom(z);
+
 
     Object.values(markers).forEach(marker => {
 
@@ -402,78 +570,145 @@
 
       if (!el) return;
 
-      const wrapper = el.querySelector('.tp-pin-wrapper');
+
+      const wrapper =
+        el.querySelector('.tp-pin-wrapper');
+
 
       if (!wrapper) return;
 
-      wrapper.style.transform = 'scale(' + scale + ')';
+
+      wrapper.style.transform =
+        'scale(' + scale + ')';
 
     });
+
   }
 
-  map.on('zoomend', updatePinScale);
+
+  map.on(
+    'zoomend',
+    updatePinScale
+  );
 
 
-  // Highlight selected story
+  /* =========================
+     HIGHLIGHT STORY
+     ========================= */
+
   function highlightStory(id) {
 
-    document.querySelectorAll('.story-item').forEach(el => {
-      el.classList.toggle(
-        'active',
-        el.dataset.id === id
-      );
-    });
+    /* Sidebar */
+
+    document
+      .querySelectorAll('.story-item')
+      .forEach(el => {
+
+        el.classList.toggle(
+          'active',
+          el.dataset.id === id
+        );
+
+      });
+
+
+    /* Markers */
 
     stories.forEach(story => {
 
-      const marker = markers[story.id];
-      const el = marker.getElement();
+      const marker =
+        markers[story.id];
+
+      const el =
+        marker.getElement();
+
 
       if (!el) return;
 
+
       if (story.id === id) {
-        el.classList.add('tp-pin-active');
+
+        el.classList.add(
+          'tp-pin-active'
+        );
+
         marker.setZIndexOffset(1000);
+
       } else {
-        el.classList.remove('tp-pin-active');
+
+        el.classList.remove(
+          'tp-pin-active'
+        );
+
         marker.setZIndexOffset(0);
+
       }
 
     });
 
-    const story = stories.find(s => s.id === id);
+
+    /* Move map */
+
+    const story =
+      stories.find(
+        s => s.id === id
+      );
+
 
     if (story) {
+
       map.flyTo(
         story.coords,
         story.zoom,
-        { duration: 0.8 }
+        {
+          duration: 0.8
+        }
       );
+
     }
+
   }
 
 
-  // Sidebar clicks
-  document.querySelectorAll('.story-item').forEach(item => {
+  /* =========================
+     SIDEBAR CLICK
+     ========================= */
 
-    item.addEventListener('click', () => {
+  document
+    .querySelectorAll('.story-item')
+    .forEach(item => {
 
-      const id = item.dataset.id;
+      item.addEventListener(
+        'click',
+        () => {
 
-      highlightStory(id);
+          const id =
+            item.dataset.id;
 
-      setTimeout(() => {
-        if (markers[id]) {
-          markers[id].openPopup();
+
+          highlightStory(id);
+
+
+          setTimeout(() => {
+
+            if (markers[id]) {
+
+              markers[id].openPopup();
+
+            }
+
+          }, 850);
+
         }
-      }, 850);
+      );
 
     });
 
-  });
 
+  /* =========================
+     INITIAL PIN SIZE
+     ========================= */
 
-  // Initial map
   updatePinScale();
 
 </script>
