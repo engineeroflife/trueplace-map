@@ -244,11 +244,12 @@
 <script>
   // ---- Story data (coords + zoom) ----
   const stories = [
-    {
-      id: "iceage",
-      coords: [28.613, -80.807], // Titusville
-      zoom: 11
-    },
+   {
+  id: "iceage",
+  coords: [28.613, -80.807],
+  zoom: 11,
+  url: "https://trueplacegifts.com/windover.html"
+},
     {
       id: "flipcoin",
       coords: [28.083, -80.608], // Melbourne
@@ -317,9 +318,15 @@ L.control.layers(baseMaps).addTo(map);
     const marker = L.marker(story.coords, { icon: pinIcon }).addTo(map);
     markers[story.id] = marker;
 
-    marker.on('click', () => {
-      highlightStory(story.id);
-    });
+   marker.on('click', () => {
+  highlightStory(story.id);
+
+  if (story.url) {
+    marker.bindPopup(
+      '<a href="' + story.url + '" style="font-weight:600; text-decoration:none;">Read the Story →</a>'
+    ).openPopup();
+  }
+});
   });
 
   // ---- Dynamic pin scaling with zoom ----
