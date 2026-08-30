@@ -27,21 +27,23 @@
       box-shadow: 0 0 14px rgba(15, 23, 42, 0.12);
       z-index: 500;
     }
-.back-home {
-  display: inline-block;
-  margin: 4px 4px 14px;
-  padding: 8px 12px;
-  background: #1e3a5f;
-  color: white;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 6px;
-}
 
-.back-home:hover {
-  opacity: 0.85;
-}
+    .back-home {
+      display: inline-block;
+      margin: 4px 4px 14px;
+      padding: 8px 12px;
+      background: #1e3a5f;
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+    }
+
+    .back-home:hover {
+      opacity: 0.85;
+    }
+
     #sidebar h2 {
       margin: 4px 4px 10px;
       font-size: 18px;
@@ -96,7 +98,7 @@
       width: 100%;
     }
 
-    /* Bea bubble */
+    /* Bea */
     #bea-message {
       position: absolute;
       bottom: 20px;
@@ -121,7 +123,7 @@
       box-shadow: 0 3px 10px rgba(15, 23, 42, 0.28);
     }
 
-    /* Location pin icon (divIcon wrapper) */
+    /* Green location pins */
     .tp-pin-icon.leaflet-div-icon {
       background: transparent;
       border: none;
@@ -141,7 +143,6 @@
       display: block;
     }
 
-    /* Active (selected) pin: glow + soft pulse */
     .tp-pin-active {
       animation: tpPinPulse 0.9s ease-out 0s 2;
     }
@@ -162,68 +163,92 @@
       body {
         flex-direction: column;
       }
+
       #sidebar {
         width: 100%;
         height: 210px;
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
       }
+
       #map {
         height: calc(100vh - 210px);
       }
+
       #bea-message {
         left: 10px;
         bottom: 10px;
       }
+
       #bea-img {
         width: 80px;
       }
+
       #bea-text {
         width: 190px;
       }
     }
   </style>
 </head>
+
 <body>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <a href="https://trueplacegifts.com" class="back-home">
-  ← Back to True Place Gifts
-</a>  
-  <h2>True Place Stories</h2>
+
+  <a href="https://trueplacegifts.com/" class="back-home">
+    ← Back to Main Menu
+  </a>
+
   <h2>True Place Stories</h2>
 
   <div class="story-item" data-id="iceage">
     <img class="story-thumb" src="windover.jpg" alt="Windover People">
     <div>
-      <div class="story-text-title">From the Ice Age to the Space Age in Brevard County, FL</div>
-      <div class="story-text-sub">Windover People · Titusville, FL</div>
+      <div class="story-text-title">
+        From the Ice Age to the Space Age in Brevard County, FL
+      </div>
+      <div class="story-text-sub">
+        Windover People · Titusville, FL
+      </div>
     </div>
   </div>
 
   <div class="story-item" data-id="flipcoin">
     <img class="story-thumb" src="FlipCoin.jpg" alt="Flip Coin Story">
     <div>
-      <div class="story-text-title">The Coin That Flips the Super Bowl</div>
-      <div class="story-text-sub">The Highland Mint · Melbourne, FL</div>
+      <div class="story-text-title">
+        The Coin That Flips the Super Bowl
+      </div>
+      <div class="story-text-sub">
+        The Highland Mint · Melbourne, FL
+      </div>
     </div>
   </div>
 
   <div class="story-item" data-id="icecream">
     <img class="story-thumb" src="icecream.jpg" alt="Space Ice Cream Story">
     <div>
-      <div class="story-text-title">The Ice Cream That Wanted to Go to Space</div>
-      <div class="story-text-sub">Space Coast · Kennedy Space Center, FL</div>
+      <div class="story-text-title">
+        The Ice Cream That Wanted to Go to Space
+      </div>
+      <div class="story-text-sub">
+        Space Coast · Kennedy Space Center, FL
+      </div>
     </div>
   </div>
 
   <div class="story-item" data-id="tomthumb">
     <img class="story-thumb" src="TomThumb.jpg" alt="Tom Thumb Story">
     <div>
-      <div class="story-text-title">One of America’s First Global Celebrities — General Tom Thumb</div>
-      <div class="story-text-sub">Middleborough, Massachusetts</div>
+      <div class="story-text-title">
+        One of America’s First Global Celebrities — General Tom Thumb
+      </div>
+      <div class="story-text-sub">
+        Middleborough, Massachusetts
+      </div>
     </div>
   </div>
+
 </div>
 
 <!-- MAP -->
@@ -231,76 +256,91 @@
 
 <!-- BEA -->
 <div id="bea-message">
-  <img id="bea-img" src="Bea_the_Otter_with_Bag_transp.png" alt="Bea the Otter">
+
+  <img
+    id="bea-img"
+    src="Bea_the_Otter_with_Bag_transp.png"
+    alt="Bea the Otter"
+  >
 
   <div id="bea-text">
     Hi, I'm Bea! Tap any green pin on the map to explore a story from that place.
   </div>
+
 </div>
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-  // ---- Story data (coords + zoom) ----
+
+  // Story locations
   const stories = [
-   {
-  id: "iceage",
-  coords: [28.613, -80.807],
-  zoom: 11,
-  url: "https://trueplacegifts.com/windover.html"
-},
+    {
+      id: "iceage",
+      title: "From the Ice Age to the Space Age",
+      coords: [28.613, -80.807],
+      zoom: 11,
+      url: "https://trueplacegifts.com/windover.html"
+    },
     {
       id: "flipcoin",
-      coords: [28.083, -80.608], // Melbourne
-      zoom: 11
+      title: "The Coin That Flips the Super Bowl",
+      coords: [28.083, -80.608],
+      zoom: 11,
+      url: "https://trueplacegifts.com/super-bowl-coin.html"
     },
     {
       id: "icecream",
-      coords: [28.573, -80.646], // KSC
-      zoom: 11
+      title: "The Ice Cream That Wanted to Go to Space",
+      coords: [28.573, -80.646],
+      zoom: 11,
+      url: "https://trueplacegifts.com/space-ice-cream.html"
     },
     {
       id: "tomthumb",
-      coords: [41.893, -70.910], // Middleborough, MA
-      zoom: 13
+      title: "General Tom Thumb",
+      coords: [41.893, -70.910],
+      zoom: 13,
+      url: "https://trueplacegifts.com/tom-thumb.html"
     }
   ];
 
-  // ---- Map setup (Carto Light) ----
+  // Map
   const map = L.map('map').setView([28.5, -80.7], 7);
 
-const streetMap = L.tileLayer(
-  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
-  }
-);
+  const streetMap = L.tileLayer(
+    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }
+  );
 
-const satelliteMap = L.tileLayer(
-  'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {
-    maxZoom: 19,
-    attribution: 'Tiles &copy; Esri'
-  }
-);
+  const satelliteMap = L.tileLayer(
+    'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; Esri'
+    }
+  );
 
-streetMap.addTo(map);
+  streetMap.addTo(map);
 
-const baseMaps = {
-  "Map": streetMap,
-  "Satellite": satelliteMap
-};
+  const baseMaps = {
+    "Map": streetMap,
+    "Satellite": satelliteMap
+  };
 
-L.control.layers(baseMaps).addTo(map);
+  L.control.layers(baseMaps).addTo(map);
 
-  // ---- Custom green location pin (SVG inside divIcon) ----
+
+  // Green pin
   const pinSVG =
     '<div class="tp-pin-wrapper">' +
       '<svg class="tp-pin-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
         '<path d="M12 2C8.7 2 6 4.7 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.3-2.7-6-6-6zm0 8a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"' +
-              ' fill="#22c55e" stroke="#166534" stroke-width="1.7" />' +
+        ' fill="#22c55e" stroke="#166534" stroke-width="1.7" />' +
       '</svg>' +
     '</div>';
 
@@ -308,90 +348,134 @@ L.control.layers(baseMaps).addTo(map);
     className: 'tp-pin-icon',
     html: pinSVG,
     iconSize: [24, 24],
-    iconAnchor: [12, 24]  // bottom point of the pin
+    iconAnchor: [12, 24]
   });
 
-  // ---- Create markers ----
+
+  // Markers
   const markers = {};
 
   stories.forEach(story => {
-    const marker = L.marker(story.coords, { icon: pinIcon }).addTo(map);
+
+    const marker = L.marker(
+      story.coords,
+      { icon: pinIcon }
+    ).addTo(map);
+
     markers[story.id] = marker;
 
-   marker.on('click', () => {
-  highlightStory(story.id);
-
-  if (story.url) {
     marker.bindPopup(
-      '<a href="' + story.url + '" style="font-weight:600; text-decoration:none;">Read the Story →</a>'
-    ).openPopup();
-  }
-});
+      '<div style="text-align:center;">' +
+        '<strong>' + story.title + '</strong><br><br>' +
+        '<a href="' + story.url + '" ' +
+        'style="font-weight:600; text-decoration:none; color:#1e3a5f;">' +
+        'Read the Story →' +
+        '</a>' +
+      '</div>'
+    );
+
+    marker.on('click', () => {
+      highlightStory(story.id);
+      marker.openPopup();
+    });
+
   });
 
-  // ---- Dynamic pin scaling with zoom ----
+
+  // Pin size by zoom
   function getScaleForZoom(z) {
-  if (z <= 5) return 0.75;
-  if (z <= 7) return 0.85;
-  if (z <= 10) return 0.95;
-  if (z <= 13) return 0.9;
-  return 0.8;
-}
+    if (z <= 5) return 0.75;
+    if (z <= 7) return 0.85;
+    if (z <= 10) return 0.95;
+    if (z <= 13) return 0.9;
+    return 0.8;
+  }
 
   function updatePinScale() {
+
     const z = map.getZoom();
     const scale = getScaleForZoom(z);
 
-    Object.values(markers).forEach(m => {
-      const el = m.getElement();
+    Object.values(markers).forEach(marker => {
+
+      const el = marker.getElement();
+
       if (!el) return;
+
       const wrapper = el.querySelector('.tp-pin-wrapper');
+
       if (!wrapper) return;
+
       wrapper.style.transform = 'scale(' + scale + ')';
+
     });
   }
 
   map.on('zoomend', updatePinScale);
 
-  // ---- Highlight + zoom to story ----
+
+  // Highlight selected story
   function highlightStory(id) {
-    // Sidebar active state
+
     document.querySelectorAll('.story-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.id === id);
+      el.classList.toggle(
+        'active',
+        el.dataset.id === id
+      );
     });
 
-    // Marker visual state
     stories.forEach(story => {
-      const m = markers[story.id];
-      const el = m.getElement();
+
+      const marker = markers[story.id];
+      const el = marker.getElement();
+
       if (!el) return;
 
       if (story.id === id) {
         el.classList.add('tp-pin-active');
-        m.setZIndexOffset(1000);
+        marker.setZIndexOffset(1000);
       } else {
         el.classList.remove('tp-pin-active');
-        m.setZIndexOffset(0);
+        marker.setZIndexOffset(0);
       }
+
     });
 
-    // Fly to selected location
     const story = stories.find(s => s.id === id);
+
     if (story) {
-      map.flyTo(story.coords, story.zoom, { duration: 0.8 });
+      map.flyTo(
+        story.coords,
+        story.zoom,
+        { duration: 0.8 }
+      );
     }
   }
 
-  // ---- Sidebar click handlers ----
+
+  // Sidebar clicks
   document.querySelectorAll('.story-item').forEach(item => {
+
     item.addEventListener('click', () => {
-      highlightStory(item.dataset.id);
+
+      const id = item.dataset.id;
+
+      highlightStory(id);
+
+      setTimeout(() => {
+        if (markers[id]) {
+          markers[id].openPopup();
+        }
+      }, 850);
+
     });
+
   });
 
-  // Initial view + scaling
+
+  // Initial map
   updatePinScale();
-  highlightStory('iceage');
+
 </script>
 
 </body>
